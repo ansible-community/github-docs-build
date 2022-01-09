@@ -222,7 +222,7 @@ jobs:
       - name: Get a diff of the changes
         if: steps.build-base.outputs.hash != steps.build-head.outputs.hash
         id: diff
-        uses: ansible-community/github-docs-build/actions/ansible-docs-build-diff@main
+        uses: felixfontein/github-docs-build/actions/ansible-docs-build-diff@fix-merge
         with:
           build-html-a: ${{ steps.build-base.outputs.build-html }}
           build-html-b: ${{ steps.build-head.outputs.build-html }}
