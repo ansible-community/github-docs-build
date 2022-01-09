@@ -193,6 +193,12 @@ jobs:
       - name: Checkout HEAD
         uses: actions/checkout@v2
         with:
+          # It would be better to use
+          #
+          #     ref: ${{ github.event.pull_request.head.sha }}
+          #
+          # since that also works when re-running this action for older commits of
+          # a PR, **but** then we get https://github.com/ansible-community/github-docs-build/issues/3 back...
           ref: refs/pull/${{ github.event.number }}/merge
           path: ${{ steps.vars.outputs.checkout-path }}
 
