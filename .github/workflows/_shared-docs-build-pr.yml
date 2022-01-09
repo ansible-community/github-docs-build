@@ -190,6 +190,10 @@ jobs:
           move-build: ${{ github.workspace }}/docsbuild/base
           artifact-upload: 'false'
 
+      - name: Remove checkout
+        run: |
+          rm -rf ${{ steps.vars.outputs.checkout-path }}
+
       - name: Checkout HEAD
         uses: actions/checkout@v2
         with:
