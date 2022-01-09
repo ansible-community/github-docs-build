@@ -53,7 +53,7 @@ jobs:
           node-version: 14
 
       - name: Install Surge
-        run: npm install -g surge
+        run: npm install -g colors@1.4.0 surge@0.23.0
 
       - name: Publish site
         if: inputs.action == 'publish'
