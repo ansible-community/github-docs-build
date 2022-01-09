@@ -79,6 +79,8 @@ runs:
   using: composite
   steps:
     - name: Delete files that should not be included in the diff
+      id: delete
+      shell: bash
       run: |
         echo "::group::Deleting files from ${{ inputs.build-html-a }}"
         find "${{ inputs.build-html-a }}" -name '*.js' -or -name '*.inv' -delete -print
