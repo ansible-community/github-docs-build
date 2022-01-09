@@ -1,6 +1,9 @@
 ---
 name: Calculate diff output between two Ansible docs builds
-description: Compare two builds of docs (HTML files) and produce diff output.
+description: |
+  Compare two builds of docs (HTML files) and produce diff output.
+
+  Please note that the input directories might be modified, as some files will be deleted.
 inputs:
   build-html-a:
     description: The path to the HTML files (set A).
@@ -75,6 +78,14 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Delete files that should not be included in the diff
+      run: |
+        echo "::group::Deleting files from ${{ inputs.build-html-a }}"
+        find "${{ inputs.build-html-a }}" -name '*.js' -or -name '*.inv' -delete -print
+        echo "::endgroup::"
+        echo "::group::Deleting files from ${{ inputs.build-html-b }}"
+        find "${{ inputs.build-html-b }}" -name '*.js' -or -name '*.inv' -delete -print
+        echo "::endgroup::"
     - name: Create diff
       id: diff
       uses: actions/github-script@v5
