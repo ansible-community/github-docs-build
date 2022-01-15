@@ -24,7 +24,7 @@ jobs:
           - ''
           - 'fake.collection'
           - 'first.collection second.collection'
-        dest: ['${{ runner.temp }}/docsbuild']  # duplicating the action's default, need to keep in sync
+        dest: ['']
         include:
           - skip-init: true
             dest: .test/simple-build
@@ -39,11 +39,23 @@ jobs:
           python-version: 3.9
 
       - name: Init
+        if: matrix.dest != ''
         id: init
         uses: ./actions/ansible-docs-build-init
         with:
           collections: ${{ matrix.collection }}
           dest-dir: ${{ matrix.dest }}
+          skip-init: ${{ matrix.skip-init }}
+
+      # if we pass the empty string, it will override the default
+      # we can't copy the default either because it uses a templating
+      # context (runner) that's unavailable in matrix.
+      - name: Init
+        if: matrix.dest == ''
+        id: init
+        uses: ./actions/ansible-docs-build-init
+        with:
+          collections: ${{ matrix.collection }}
           skip-init: ${{ matrix.skip-init }}
 
       - name: assert
