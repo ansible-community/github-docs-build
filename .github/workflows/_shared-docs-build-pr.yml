@@ -187,7 +187,7 @@ jobs:
         with:
           build-script: ${{ steps.init-base.outputs.build-script }}
           build-html: ${{ steps.init-base.outputs.build-html }}
-          move-build: ${{ github.workspace }}/docsbuild/base
+          copy-build: ${{ github.workspace }}/docsbuild/base
           artifact-upload: 'false'
 
       - name: Checkout HEAD
@@ -216,7 +216,7 @@ jobs:
         with:
           build-script: ${{ steps.init-head.outputs.build-script }}
           build-html: ${{ steps.init-head.outputs.build-html }}
-          move-build: ${{ github.workspace }}/docsbuild/head
+          copy-build: ${{ github.workspace }}/docsbuild/head
           artifact-name: ${{ inputs.artifact-name }}
 
       - name: Get a diff of the changes

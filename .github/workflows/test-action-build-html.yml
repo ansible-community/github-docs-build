@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Simple invoke - no move, no artifact
+      - name: Simple invoke - no copy, no artifact
         id: simple1
         uses: ./actions/ansible-docs-build-html
         with:
@@ -45,13 +45,13 @@ jobs:
           assert output_hash == expected_hash
           assert artifact_hash != output_hash
 
-      - name: Simple invoke - with move, no artifact
+      - name: Simple invoke - with copy, no artifact
         id: simple2
         uses: ./actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
           build-html: .test/simple-build/html
-          move-build: .moves/simple2/html
+          copy-build: .copies/simple2/html
           artifact-upload: false
 
       - name: Download artifacts
@@ -69,8 +69,7 @@ jobs:
           artifact_hash = r'${{ hashFiles(steps.simple2-artifact.outputs.download-path) }}'
           original_build_hash = r'${{ hashFiles('.test/simple-build/html') }}'
 
-          assert output_build_html == '.moves/simple2/html'
+          assert output_build_html == '.copies/simple2/html'
           assert output_hash == expected_hash
-          assert output_hash != original_build_hash
+          assert output_hash == original_build_hash
           assert artifact_hash != output_hash
-          assert artifact_hash == original_build_hash
