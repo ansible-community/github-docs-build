@@ -13,6 +13,7 @@ on:
 
 jobs:
   tests:
+    name: Simple tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -43,3 +44,33 @@ jobs:
           assert output_build_html == '.test/simple-build/html'
           assert output_hash == expected_hash
           assert artifact_hash != output_hash
+
+      - name: Simple invoke - with move, no artifact
+        id: simple2
+        uses: ./actions/ansible-docs-build-html
+        with:
+          build-script: .test/simple-build/build.sh
+          build-html: .test/simple-build/html
+          move-build: .moves/simple2/html
+          artifact-upload: false
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        id: simple2-artifact
+        with:
+          path: .artifacts/simple1
+
+      - name: assert
+        shell: python
+        run: |
+          expected_hash = r'${{ hashFiles('.test/simple-build/src') }}'
+          output_hash = r'${{ steps.simple2.outputs.hash }}'
+          output_build_html = r'${{ steps.simple2.outputs.build-html }}'
+          artifact_hash = r'${{ hashFiles(steps.simple2-artifact.outputs.download-path) }}'
+          original_build_hash = r'${{ hashFiles('.test/simple-build/html') }}'
+
+          assert output_build_html == '.moves/simple2/html'
+          assert output_hash == expected_hash
+          assert output_hash != original_build_hash
+          assert artifact_hash != output_hash
+          assert artifact_hash == original_build_hash
