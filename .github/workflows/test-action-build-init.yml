@@ -3,12 +3,12 @@ on:
   push:
     branches: [main]
     paths:
-      # - .test/**
+      - .test/**
       - .github/workflows/test-action-build-init.yml
       - actions/ansibe-docs-build-init/**
   pull_request:
     paths:
-      # - .test/**
+      - .test/**
       - .github/workflows/test-action-build-init.yml
       - actions/ansibe-docs-build-init/**
 
@@ -47,7 +47,25 @@ jobs:
           skip-init: ${{ matrix.skip-init }}
 
       - name: assert
-        shell: python
+        env:
+          output_build_script: ${{ steps.init.outputs.build-script }}
+          output_build_html: ${{ steps.init.outputs.build-html }}
         run: |
-          output_build_script = r'${{ steps.init.outputs.build-script }}'
-          output_build_html = r'${{ steps.init.outputs.build-html }}'
+          # check that the vuild script exists
+          [ -f "$output_build_script" ] || exit 1
+
+          # html dir is not guaranteed to exist but it is always at the same relative path
+          # we'll use this to get to the "root" (dest-dir), even when we used a defaulted dir.
+          mkdir -p "$output_build_html"
+          cd "$output_build_html/../.."
+
+          # by now, all requirements should have been installed, let's pip freeze
+          pip freeze > "${{ runner.temp }}/pre-freeze.txt"
+
+          # now we'll try to do a pip install again with the requirements file
+          pip install -r "requirements.txt" --disable-pip-version-check
+
+          # and pip freeze again to compare
+          pip freeze > "${{ runner.temp }}/post-freeze.txt"
+
+          cmp "${{ runner.temp }}/pre-freeze.txt" "${{ runner.temp }}/post-freeze.txt" || exit 1
