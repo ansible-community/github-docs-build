@@ -2,8 +2,8 @@
 set -e
 pushd "${BASH_SOURCE%/*}"
 
-rm -rf html
-mkdir -p html
-cp -R src/* html/
+rm -rf build/html
+mkdir -p build/html
+cp -R src/* build/html/
 
 popd
