@@ -20,7 +20,7 @@ jobs:
 
       - name: Simple invoke - no move, no artifact
         id: simple1
-        uses: ./actions/ansibe-docs-build-html
+        uses: ./actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
           build-html: .test/simple-build/html
