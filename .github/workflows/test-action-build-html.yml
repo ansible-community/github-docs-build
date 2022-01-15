@@ -58,7 +58,7 @@ jobs:
         uses: actions/download-artifact@v2
         id: simple2-artifact
         with:
-          path: .artifacts/simple1
+          path: .artifacts/simple2
 
       - name: assert
         shell: python
@@ -73,3 +73,72 @@ jobs:
           assert output_hash == expected_hash
           assert output_hash == original_build_hash
           assert artifact_hash != output_hash
+
+      - name: Simple invoke - no copy, with artifact
+        id: simple3
+        uses: ./actions/ansible-docs-build-html
+        with:
+          build-script: .test/simple-build/build.sh
+          build-html: .test/simple-build/html
+          artifact-retention-days: 1
+          artifact-name: tests-simple3
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        id: simple3-artifact
+        with:
+          name: ${{ steps.simple3.outputs.artifact-name }}
+          path: .artifacts/simple3
+
+      - name: assert
+        shell: python
+        run: |
+          expected_hash = r'${{ hashFiles('.test/simple-build/src') }}'
+          output_hash = r'${{ steps.simple3.outputs.hash }}'
+          output_build_html = r'${{ steps.simple3.outputs.build-html }}'
+          artifact_hash = r'${{ hashFiles(steps.simple3-artifact.outputs.download-path) }}'
+
+          assert output_build_html == '.test/simple-build/html'
+          assert output_hash == expected_hash
+          assert artifact_hash == output_hash
+
+      - name: assert artifact url
+        # this URL only goes to the run page, not to an individual artifact
+        # so all we're really checking here is that it's a valid URL that's accessible
+        run: wget '${{ steps.simple3.outputs.artifact-url }}'
+
+      - name: Simple invoke - with copy, with artifact
+        id: simple4
+        uses: ./actions/ansible-docs-build-html
+        with:
+          build-script: .test/simple-build/build.sh
+          build-html: .test/simple-build/html
+          copy-build: .copies/simple4/html
+          artifact-retention-days: 1
+          artifact-name: tests-simple4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        id: simple4-artifact
+        with:
+          name: ${{ steps.simple4.outputs.artifact-name }}
+          path: .artifacts/simple4
+
+      - name: assert
+        shell: python
+        run: |
+          expected_hash = r'${{ hashFiles('.test/simple-build/src') }}'
+          output_hash = r'${{ steps.simple4.outputs.hash }}'
+          output_build_html = r'${{ steps.simple4.outputs.build-html }}'
+          artifact_hash = r'${{ hashFiles(steps.simple4-artifact.outputs.download-path) }}'
+          original_build_hash = r'${{ hashFiles('.test/simple-build/html') }}'
+
+          assert output_build_html == '.copies/simple4/html'
+          assert output_hash == expected_hash
+          assert output_hash == original_build_hash
+          assert artifact_hash == output_hash
+
+      - name: assert artifact url
+        # this URL only goes to the run page, not to an individual artifact
+        # so all we're really checking here is that it's a valid URL that's accessible
+        run: wget '${{ steps.simple4.outputs.artifact-url }}'
