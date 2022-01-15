@@ -26,21 +26,20 @@ jobs:
           build-html: .test/simple-build/html
           artifact-upload: false
 
-      - name: assert no artifact
+      - name: Download artifacts
         uses: actions/download-artifact@v2
         id: simple1-artifact
-        continue-on-error: true
         with:
-          path: ${{ runner.temp }}/simple1
+          path: .artifacts/simple1
 
       - name: assert
         shell: python
         run: |
-          expected_hash = r'${{ hashFiles('.test/src') }}'
+          expected_hash = r'${{ hashFiles('.test/simple-build/src') }}'
           output_hash = r'${{ steps.simple1.outputs.hash }}'
           output_build_html = r'${{ steps.simple1.outputs.build-html }}'
-          artifact_outcome = r'${{ steps.simple1-artifact.outcome }}'
+          artifact_hash = r'${{ hashFiles(steps.simple1-artifact.outputs.download-path) }}'
 
           assert output_build_html == '.test/simple-build/html'
           assert output_hash == expected_hash
-          assert artifact_outcome == 'failure'
+          assert artifact_hash != output_hash
