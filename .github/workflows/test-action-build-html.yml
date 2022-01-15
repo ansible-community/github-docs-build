@@ -26,7 +26,7 @@ jobs:
         uses: ./actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
-          build-html: .test/simple-build/html
+          build-html: .test/simple-build/build/html
           artifact-upload: false
 
       - name: Simple 1 - Download artifacts
@@ -43,7 +43,7 @@ jobs:
           output_build_html = r'${{ steps.simple1.outputs.build-html }}'
           artifact_hash = r'${{ hashFiles(steps.simple1-artifact.outputs.download-path) }}'
 
-          assert output_build_html == '.test/simple-build/html'
+          assert output_build_html == '.test/simple-build/build/html'
           assert output_hash == expected_hash
           assert artifact_hash != output_hash
 
@@ -52,7 +52,7 @@ jobs:
         uses: ./actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
-          build-html: .test/simple-build/html
+          build-html: .test/simple-build/build/html
           copy-build: .copies/simple2/html
           artifact-upload: false
 
@@ -69,7 +69,7 @@ jobs:
           output_hash = r'${{ steps.simple2.outputs.hash }}'
           output_build_html = r'${{ steps.simple2.outputs.build-html }}'
           artifact_hash = r'${{ hashFiles(steps.simple2-artifact.outputs.download-path) }}'
-          original_build_hash = r'${{ hashFiles('.test/simple-build/html') }}'
+          original_build_hash = r'${{ hashFiles('.test/simple-build/build/html') }}'
 
           assert output_build_html == '.copies/simple2/html'
           assert output_hash == expected_hash
@@ -81,7 +81,7 @@ jobs:
         uses: ./actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
-          build-html: .test/simple-build/html
+          build-html: .test/simple-build/build/html
           artifact-retention-days: 1
           artifact-name: tests-simple3
 
@@ -100,7 +100,7 @@ jobs:
           output_build_html = r'${{ steps.simple3.outputs.build-html }}'
           artifact_hash = r'${{ hashFiles(steps.simple3-artifact.outputs.download-path) }}'
 
-          assert output_build_html == '.test/simple-build/html'
+          assert output_build_html == '.test/simple-build/build/html'
           assert output_hash == expected_hash
           assert artifact_hash == output_hash
 
@@ -114,7 +114,7 @@ jobs:
         uses: ./actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
-          build-html: .test/simple-build/html
+          build-html: .test/simple-build/build/html
           copy-build: .copies/simple4/html
           artifact-retention-days: 1
           artifact-name: tests-simple4
@@ -133,7 +133,7 @@ jobs:
           output_hash = r'${{ steps.simple4.outputs.hash }}'
           output_build_html = r'${{ steps.simple4.outputs.build-html }}'
           artifact_hash = r'${{ hashFiles(steps.simple4-artifact.outputs.download-path) }}'
-          original_build_hash = r'${{ hashFiles('.test/simple-build/html') }}'
+          original_build_hash = r'${{ hashFiles('.test/simple-build/build/html') }}'
 
           assert output_build_html == '.copies/simple4/html'
           assert output_hash == expected_hash
