@@ -1,0 +1,46 @@
+---
+name: test - action/build-html
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/test-action-build-html.yml
+      - actions/ansibe-docs-build-html/**
+  pull_request:
+    paths:
+      - .github/workflows/test-action-build-html.yml
+      - actions/ansibe-docs-build-html/**
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Simple invoke - no move, no artifact
+        id: simple1
+        uses: ./actions/ansibe-docs-build-html
+        with:
+          build-script: .test/simple-build/build.sh
+          build-html: .test/simple-build/html
+          artifact-upload: false
+
+      - name: assert no artifact
+        uses: actions/download-artifact@v2
+        id: simple1-artifact
+        continue-on-error: true
+        with:
+          path: ${{ runner.temp }}/simple1
+
+      - name: assert
+        shell: python
+        run: |
+          expected_hash = r'${{ hashFiles('.test/src') }}'
+          output_hash = r'${{ steps.simple1.outputs.hash }}'
+          output_build_html = r'${{ steps.simple1.outputs.build-html }}'
+          artifact_outcome = r'${{ steps.simple1-artifact.outcome }}'
+
+          assert output_build_html == '.test/simple-build/html'
+          assert output_hash == expected_hash
+          assert artifact_outcome == 'failure'
