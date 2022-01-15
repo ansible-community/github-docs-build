@@ -1,0 +1,53 @@
+name: test - action/build-init
+on:
+  push:
+    branches: [main]
+    paths:
+      # - .test/**
+      - .github/workflows/test-action-build-init.yml
+      - actions/ansibe-docs-build-init/**
+  pull_request:
+    paths:
+      # - .test/**
+      - .github/workflows/test-action-build-init.yml
+      - actions/ansibe-docs-build-init/**
+
+jobs:
+  tests:
+    name: Init tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        skip-init: [false]
+        collections:
+          - ''
+          - 'fake.collection'
+          - 'first.collection second.collection'
+        dest: ['']
+        include:
+          - skip-init: true
+            dest: .test/simple-build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Init
+        id: init
+        uses: ./actions/ansible-docs-build-init
+        with:
+          collections: ${{ matrix.collection }}
+          dest-dir: ${{ matrix.dest }}
+          skip-init: ${{ matrix.skip-init }}
+
+      - name: assert
+        shell: python
+        run: |
+          output_build_script = r'${{ steps.init.outputs.build-script }}'
+          output_build_html = r'${{ steps.init.outputs.build-html }}'
