@@ -24,7 +24,7 @@ jobs:
           - ''
           - 'fake.collection'
           - 'first.collection second.collection'
-        dest: ['']
+        dest: ['${{ runner.temp }}/docsbuild']  # duplicating the action's default, need to keep in sync
         include:
           - skip-init: true
             dest: .test/simple-build
@@ -51,7 +51,7 @@ jobs:
           output_build_script: ${{ steps.init.outputs.build-script }}
           output_build_html: ${{ steps.init.outputs.build-html }}
         run: |
-          # check that the vuild script exists
+          # check that the build script exists
           [ -f "$output_build_script" ] || exit 1
 
           # html dir is not guaranteed to exist but it is always at the same relative path
