@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Simple invoke - no copy, no artifact
+      - name: Simple 1 invoke - no copy, no artifact
         id: simple1
         uses: ./actions/ansible-docs-build-html
         with:
@@ -27,13 +27,13 @@ jobs:
           build-html: .test/simple-build/html
           artifact-upload: false
 
-      - name: Download artifacts
+      - name: Simple 1 - Download artifacts
         uses: actions/download-artifact@v2
         id: simple1-artifact
         with:
           path: .artifacts/simple1
 
-      - name: assert
+      - name: Simple 1 - assert
         shell: python
         run: |
           expected_hash = r'${{ hashFiles('.test/simple-build/src') }}'
@@ -45,7 +45,7 @@ jobs:
           assert output_hash == expected_hash
           assert artifact_hash != output_hash
 
-      - name: Simple invoke - with copy, no artifact
+      - name: Simple 2 invoke - with copy, no artifact
         id: simple2
         uses: ./actions/ansible-docs-build-html
         with:
@@ -54,13 +54,13 @@ jobs:
           copy-build: .copies/simple2/html
           artifact-upload: false
 
-      - name: Download artifacts
+      - name: Simple 2 - Download artifacts
         uses: actions/download-artifact@v2
         id: simple2-artifact
         with:
           path: .artifacts/simple2
 
-      - name: assert
+      - name: Simple 2 - assert
         shell: python
         run: |
           expected_hash = r'${{ hashFiles('.test/simple-build/src') }}'
@@ -74,7 +74,7 @@ jobs:
           assert output_hash == original_build_hash
           assert artifact_hash != output_hash
 
-      - name: Simple invoke - no copy, with artifact
+      - name: Simple 3 invoke - no copy, with artifact
         id: simple3
         uses: ./actions/ansible-docs-build-html
         with:
@@ -83,14 +83,14 @@ jobs:
           artifact-retention-days: 1
           artifact-name: tests-simple3
 
-      - name: Download artifacts
+      - name: Simple 3 - Download artifacts
         uses: actions/download-artifact@v2
         id: simple3-artifact
         with:
           name: ${{ steps.simple3.outputs.artifact-name }}
           path: .artifacts/simple3
 
-      - name: assert
+      - name: Simple 3 - assert
         shell: python
         run: |
           expected_hash = r'${{ hashFiles('.test/simple-build/src') }}'
@@ -102,12 +102,12 @@ jobs:
           assert output_hash == expected_hash
           assert artifact_hash == output_hash
 
-      - name: assert artifact url
+      - name: Simple 3 - assert artifact url
         # this URL only goes to the run page, not to an individual artifact
         # so all we're really checking here is that it's a valid URL that's accessible
         run: wget '${{ steps.simple3.outputs.artifact-url }}'
 
-      - name: Simple invoke - with copy, with artifact
+      - name: Simple 4 invoke - with copy, with artifact
         id: simple4
         uses: ./actions/ansible-docs-build-html
         with:
@@ -117,14 +117,14 @@ jobs:
           artifact-retention-days: 1
           artifact-name: tests-simple4
 
-      - name: Download artifacts
+      - name: Simple 4 - Download artifacts
         uses: actions/download-artifact@v2
         id: simple4-artifact
         with:
           name: ${{ steps.simple4.outputs.artifact-name }}
           path: .artifacts/simple4
 
-      - name: assert
+      - name: Simple 4 - assert
         shell: python
         run: |
           expected_hash = r'${{ hashFiles('.test/simple-build/src') }}'
@@ -138,7 +138,7 @@ jobs:
           assert output_hash == original_build_hash
           assert artifact_hash == output_hash
 
-      - name: assert artifact url
+      - name: Simple 4 - assert artifact url
         # this URL only goes to the run page, not to an individual artifact
         # so all we're really checking here is that it's a valid URL that's accessible
         run: wget '${{ steps.simple4.outputs.artifact-url }}'
