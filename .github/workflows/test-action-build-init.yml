@@ -38,24 +38,19 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: Init
-        if: matrix.dest != ''
-        id: init
-        uses: ./actions/ansible-docs-build-init
-        with:
-          collections: ${{ matrix.collection }}
-          dest-dir: ${{ matrix.dest }}
-          skip-init: ${{ matrix.skip-init }}
-
-      # if we pass the empty string, it will override the default
-      # we can't copy the default either because it uses a templating
+      # if we pass an empty string to dest-dir, it will override the default.
+      # we can't copy the default into the matrix because it uses a templating
       # context (runner) that's unavailable in matrix.
+      # We can't use two steps with opposing conditionals because we can't re-use
+      # the id (and we need it in later steps).
       - name: Init
-        if: matrix.dest == ''
         id: init
         uses: ./actions/ansible-docs-build-init
         with:
           collections: ${{ matrix.collection }}
+          # combining runner.temp and /docsbuild copies the default from the action
+          # please keep in sync!
+          dest-dir: ${{ matrix.dest || format('{0}/{1}', runner.temp, '/docsbuild') }}
           skip-init: ${{ matrix.skip-init }}
 
       - name: assert
