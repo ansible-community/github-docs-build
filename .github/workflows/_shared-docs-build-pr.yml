@@ -159,6 +159,19 @@ jobs:
 
             core.setOutput('skip-init', skipInit)
 
+            // when a PR is first opened, the merge sha is blank
+            // when a PR is closed, the merge branch doesn't exist
+            // so let's set a var for the PR ref we'll checkout,
+            // using the merge SHA usually, but using the merge branch
+            // if the SHA is blank.
+
+            const mergeSha = '${{ github.event.pull_request.merge_commit_sha }}'
+            if (mergeSha != '') {
+                core.setOutput('pr-checkout-ref', mergeSha)
+            } else {
+                core.setOutput('pr-checkout-ref', 'refs/pull/${{ github.event.number }}/merge')
+            }
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -199,7 +212,7 @@ jobs:
           #
           # since that also works when re-running this action for older commits of
           # a PR, **but** then we get https://github.com/ansible-community/github-docs-build/issues/3 back...
-          ref: refs/pull/${{ github.event.number }}/merge
+          ref: ${{ steps.vars.outputs.pr-checkout-ref }}
           path: ${{ steps.vars.outputs.checkout-path }}
 
       - name: Initialize the build environment (HEAD)
