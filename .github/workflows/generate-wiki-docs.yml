@@ -14,7 +14,8 @@ on:
 jobs:
   generate:
     env:
-      WIKI: ${{ github.workspace }}/wiki
+      # this path is going to be used with rsync, it MUST end in a forward slash [/]
+      WIKI: ${{ github.workspace }}/wiki/
       ANSIBLE_COLLECTIONS_PATHS: ${{ github.workspace }}/.internal/ansible
     runs-on: ubuntu-latest
     steps:
