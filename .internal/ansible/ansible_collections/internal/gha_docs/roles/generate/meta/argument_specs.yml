@@ -1,0 +1,21 @@
+---
+argument_specs:
+  main:
+    options:
+      file:
+        type: path
+        required: true
+        description: The path to the action or workflow file to parse.
+
+      type:
+        type: str
+        required: true
+        description: The type of input file.
+        choices:
+          - action
+          - workflow
+
+      output:
+        type: path
+        required: true
+        description: The path to the output file.

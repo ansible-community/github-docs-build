@@ -1,0 +1,44 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    # <root>/.internal/ansible/ansible_collections/internal/gha_docs/playbooks
+    # ^6     ^5        ^4      ^3                  ^2       ^1       ^ playbook_dir
+    repo_root: >-
+      {{
+        playbook_dir
+        | dirname
+        | dirname
+        | dirname
+        | dirname
+        | dirname
+        | dirname
+      }}
+    actions_root: '{{ repo_root }}/actions'
+    workflows_root: '{{ repo_root }}/.github/workflows'
+    output_dir: '{{ role_path }}/files/output'
+  tasks:
+    - name: Find actions
+      ansible.builtin.find:
+        paths: '{{ actions_root }}'
+        recurse: true
+        patterns: action.yml
+      register: actions
+
+    - name: Generate actions docs
+      ansible.builtin.include_role:
+        name: internal.gha_docs.generate
+      vars:
+        type: action
+        file: '{{ item.path }}'
+        output: '{{ output_dir }}/action_{{ item.path | dirname | basename }}.md'
+      loop: '{{ actions.files }}'
+
+    - name: Generate workflow docs
+      ansible.builtin.include_role:
+        name: internal.gha_docs.generate
+      vars:
+        type: workflow
+        file: '{{ item }}'
+        output: '{{ output_dir }}/workflow{{ item | basename | splitext | first }}.md'
+      with_fileglob: '{{ workflows_root }}/_shared-*.yml'

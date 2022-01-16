@@ -1,0 +1,8 @@
+---
+namespace: internal
+name: gha_docs
+description: A collection internal to this repository for generating documentation from GHA content.
+version: 0.1.0
+readme: README.md
+authors:
+  - Brian Scholer (@briantist)

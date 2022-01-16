@@ -1,0 +1,34 @@
+---
+- name: Load the file
+  set_fact:
+    _src: "{{ lookup('ansible.builtin.file', file) | from_yaml }}"
+
+- name: Template the workflow docs
+  when: type == 'workflow'
+  vars:
+    full: '{{ _src }}'
+    name: '{{ _src.name }}'
+    reference: '{{ file | basename }}'
+    jobs: '{{ _src.jobs }}'
+    inputs: '{{ _src[true].workflow_call.inputs | default({}) }}'
+    outputs: '{{ _src[true].workflow_call.outputs | default({}) }}'
+  ansible.builtin.template:
+    src: workflow.md.j2
+    dest: '{{ output }}'
+    force: true
+    mode: '644'
+
+- name: Template the action docs
+  when: type == 'action'
+  vars:
+    full: '{{ _src }}'
+    name: '{{ _src.name }}'
+    reference: '{{ file | dirname | basename }}'
+    description: '{{ _src.description }}'
+    inputs: '{{ _src.inputs | default({}) }}'
+    outputs: '{{ _src.outputs | default({}) }}'
+  ansible.builtin.template:
+    src: action.md.j2
+    dest: '{{ output }}'
+    force: true
+    mode: '644'
