@@ -16,7 +16,9 @@
       }}
     actions_root: '{{ repo_root }}/actions'
     workflows_root: '{{ repo_root }}/.github/workflows'
-    output_dir: '{{ role_path }}/files/output'
+    output_root: '{{ role_path }}/files/output'
+    action_output_dir: '{{ output_root }}'
+    workflow_output_dir: '{{ output_root }}'
   tasks:
     - name: Find actions
       ansible.builtin.find:
@@ -31,7 +33,7 @@
       vars:
         type: action
         file: '{{ item.path }}'
-        output: '{{ output_dir }}/action_{{ item.path | dirname | basename }}.md'
+        output: '{{ action_output_dir }}/action_{{ item.path | dirname | basename }}.md'
       loop: '{{ actions.files }}'
 
     - name: Generate workflow docs
@@ -40,5 +42,5 @@
       vars:
         type: workflow
         file: '{{ item }}'
-        output: '{{ output_dir }}/workflow{{ item | basename | splitext | first }}.md'
+        output: '{{ workflow_output_dir }}/workflow{{ item | basename | splitext | first }}.md'
       with_fileglob: '{{ workflows_root }}/_shared-*.yml'
