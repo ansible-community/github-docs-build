@@ -10,10 +10,11 @@ inputs:
     description: The path where the build script will output the HTML.
     required: false
     default: ${{ runner.temp }}/docsbuild/build/html
-  move-build:
+  copy-build:
     description: |
-      If set, move the built HTML to this path after building, and set the build-html output to this path instead.
+      If set, copy the built HTML files to this path after building, and set the build-html output to this path instead.
       This is useful if you need to do multiple builds from the same environment, or otherwise need the files to be elsewhere.
+      Note: files in the destination that do not exist in the source will be deleted!
     required: false
   artifact-upload:
     description: If true then upload the rendered docs as a build artifact.
@@ -52,13 +53,13 @@ runs:
         echo "::endgroup::"
 
         HTML="${{ inputs.build-html }}"
-        MOVE_BUILD="${{ inputs.move-build }}"
+        COPY_BUILD="${{ inputs.copy-build }}"
 
-        if [[ "$MOVE_BUILD" != "" ]] ; then
-            echo "::group::Move the build files"
-            mkdir -p "$MOVE_BUILD"
-            rsync -avc --delete-after "$HTML" "$MOVE_BUILD"
-            echo "::set-output name=build-html::$MOVE_BUILD"
+        if [[ "$COPY_BUILD" != "" ]] ; then
+            echo "::group::Copy the build files"
+            mkdir -p "$COPY_BUILD"
+            rsync -avc --delete-after "$HTML" "$COPY_BUILD"
+            echo "::set-output name=build-html::$COPY_BUILD"
             echo "::endgroup::"
         else
             echo "::set-output name=build-html::$HTML"
