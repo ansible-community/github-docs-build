@@ -1,9 +1,6 @@
 ---
 name: Generate Wiki Docs
 on:
-  pull_request: ######## TO BE REMOVED BEFORE MERGING
-    types: [opened, reopened, synchronize]
-
   push:
     branches: [main]
     paths:
@@ -47,10 +44,6 @@ jobs:
         env:  # this action is written such that the inputs must be specified as env vars
           WIKI_DIR: ${{ env.WIKI }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_MAIL: 1260690+briantist@users.noreply.github.com
-          GH_NAME: BS[bot]
-          WIKI_PUSH_MESSAGE: 'Docs for ${{ github.repository }}/${{ github.sha }} : dummy message'
-          ### ABOVE FOR PR TEST ONLY
-          # GH_MAIL: ${{ github.event.head_commit.author.email }}
-          # GH_NAME: ${{ github.event.head_commit.author.name }}[bot]
-          # WIKI_PUSH_MESSAGE: 'Docs for ${{ github.repository }}/${{ github.event.head_commit.id }} : ${{ github.event.head_commit.message }}'
+          GH_MAIL: ${{ github.event.head_commit.author.email }}
+          GH_NAME: ${{ github.event.head_commit.author.name }}[bot]
+          WIKI_PUSH_MESSAGE: 'Docs for ${{ github.repository }}/${{ github.event.head_commit.id }} : ${{ github.event.head_commit.message }}'
