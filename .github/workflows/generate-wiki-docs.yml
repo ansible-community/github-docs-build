@@ -36,7 +36,7 @@ jobs:
       - name: Generate new docs
         run: >-
           ansible-playbook
-          internal.gh_docs.generate_docs
+          internal.gha_docs.generate_docs
           -e "action_output_dir=$WIKI/actions"
           -e "workflow_output_dir=$WIKI/workflows"
 
