@@ -1,6 +1,9 @@
 ---
 name: Generate Wiki Docs
 on:
+  pull_request: ######## TO BE REMOVED BEFORE MERGING
+    types: [opened, reopened, synchronize]
+
   push:
     branches: [main]
     paths:
