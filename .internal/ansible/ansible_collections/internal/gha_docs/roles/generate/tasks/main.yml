@@ -7,7 +7,7 @@
   ansible.builtin.file:
     path: '{{ output | dirname }}'
     state: directory
-    mode: '644'
+    mode: '744'
 
 - name: Template the workflow docs
   when: type == 'workflow'
