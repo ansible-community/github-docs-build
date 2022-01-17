@@ -3,6 +3,12 @@
   set_fact:
     _src: "{{ lookup('ansible.builtin.file', file) | from_yaml }}"
 
+- name: Ensure output dir exists
+  ansible.builtin.file:
+    path: '{{ output }}'
+    state: directory
+    mode: '644'
+
 - name: Template the workflow docs
   when: type == 'workflow'
   vars:
