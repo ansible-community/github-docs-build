@@ -1,0 +1,27 @@
+# `{{ reference }}`
+## {{ name }}
+
+### Jobs
+| ID  | Name | Permissions |
+| --- | ---- | ----------- |
+{% for id, job in jobs.items() %}
+| `{{ id }}` | {{ job.name | default(id) }} | {% if job.permissions is not defined %}_default_{% else %}<ul>{% for resource, access in job.permissions.items() %}<li><strong>{{ resource }}</strong>: <code>{{ access }}</code></li>{% endfor %}{% endif %} |
+{% endfor %}
+
+<hr />
+
+### Inputs
+| Name (✅required) | Type | Default | Description |
+| ----------------- | ---- | ------- | ----------- |
+{% for name, inp in inputs.items() %}
+| `{{ name }}`{% if inp.required %}✅{% endif %} | {{ inp.type }} | {% if inp.default is defined %}{% if "\n" in inp.default | string %}✳ _see `action.yml` for full default value_{% else %}<code>{{ (inp.default | string).replace('`', '\`') }}</code>{% endif %}{% endif %} | {{ (inp.description.replace("\n", '<br />')) }} |
+{% endfor %}
+
+<hr />
+
+### Outputs
+| Name | Description |
+| ---- | ----------- |
+{% for name, out in outputs.items() %}
+| `{{ name }}` | {{ (out.description | default('')).replace("\n", '<br />') }} |
+{% endfor %}

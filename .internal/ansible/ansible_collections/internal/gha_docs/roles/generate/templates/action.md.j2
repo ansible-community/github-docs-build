@@ -1,0 +1,20 @@
+# `{{ reference }}`
+## {{ name }}
+
+{{ description }}
+
+### Inputs
+| Name (✅required) | Default | Description |
+| ----------------- | ------- | ----------- |
+{% for name, inp in inputs.items() %}
+| `{{ name }}`{% if inp.required %}✅{% endif %} | {% if inp.default is defined %}{% if "\n" in inp.default %}✳ _see `action.yml` for full default value_{% else %}<code>{{ inp.default.replace('`', '\`') }}</code>{% endif %}{% endif %} | {{ (inp.description.replace("\n", '<br />')) }} |
+{% endfor %}
+
+<hr />
+
+### Outputs
+| Name | Description |
+| ---- | ----------- |
+{% for name, out in outputs.items() %}
+| `{{ name }}` | {{ (out.description | default('')).replace("\n", '<br />') }} |
+{% endfor %}

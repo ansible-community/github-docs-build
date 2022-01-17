@@ -1,0 +1,49 @@
+---
+name: Generate Wiki Docs
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/_shared*
+      - .github/workflows/generate-wiki-docs.yml
+      - actions/**/action.yml
+
+jobs:
+  generate:
+    env:
+      # this path is going to be used with rsync, it MUST end in a forward slash [/]
+      WIKI: ${{ github.workspace }}/wiki/
+      ANSIBLE_COLLECTIONS_PATHS: ${{ github.workspace }}/.internal/ansible
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Checkout wiki
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: ${{ env.WIKI }}
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install Ansible
+        run: pip install 'ansible-core>=2.12,<2.13' --disable-pip-version-check
+
+      - name: Generate new docs
+        run: >-
+          ansible-playbook
+          internal.gha_docs.generate_docs
+          -e "action_output_dir=$WIKI/actions"
+          -e "workflow_output_dir=$WIKI/workflows"
+
+      - name: Publish docs
+        # @v2 https://github.com/Andrew-Chen-Wang/github-wiki-action/releases/tag/v2
+        uses: Andrew-Chen-Wang/github-wiki-action@b386aca0ddc5ec22b6003ba4cb50fa0b17243f6c
+        env:  # this action is written such that the inputs must be specified as env vars
+          WIKI_DIR: ${{ env.WIKI }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_MAIL: ${{ github.event.head_commit.author.email }}
+          GH_NAME: ${{ github.event.head_commit.author.name }}[bot]
+          WIKI_PUSH_MESSAGE: 'Docs for ${{ github.repository }}/${{ github.event.head_commit.id }} : ${{ github.event.head_commit.message }}'
