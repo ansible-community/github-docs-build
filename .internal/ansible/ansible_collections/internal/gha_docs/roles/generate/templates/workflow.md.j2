@@ -19,6 +19,15 @@
 
 <hr />
 
+### Secrets
+| Name (✅required) | Description |
+| ----------------- | ----------- |
+{% for name, sec in secrets.items() %}
+| `{{ name }}`{% if sec.required %}✅{% endif %} | {{ (sec.description.replace("\n", '<br />')) }} |
+{% endfor %}
+
+<hr />
+
 ### Outputs
 | Name | Description |
 | ---- | ----------- |
