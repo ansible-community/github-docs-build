@@ -13,7 +13,7 @@ env:
   # if you want this workflow to run on your fork, you must:
   # 1) enable the wiki (and have at minimum a main/default page)
   # 2) set the GENERATE_WIKI_PAGES secret in your fork to the value "yes"
-  SHOULD_RUN: github.repository == 'ansible-community/github-docs-build' || secrets.GENERATE_WIKI_PAGES == 'yes'
+  SHOULD_RUN: secrets.GENERATE_WIKI_PAGES == 'yes' || github.repository == 'ansible-community/github-docs-build'
 
 jobs:
   generate:
