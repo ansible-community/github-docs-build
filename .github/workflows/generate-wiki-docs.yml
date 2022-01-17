@@ -6,6 +6,7 @@ on:
     paths:
       - .github/workflows/_shared*
       - .github/workflows/generate-wiki-docs.yml
+      - .internal/ansible/**
       - actions/**/action.yml
 
 jobs:
