@@ -46,5 +46,8 @@ jobs:
           WIKI_DIR: ${{ env.WIKI }}/
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_MAIL: ${{ github.event.head_commit.author.email }}
-          GH_NAME: ${{ github.event.head_commit.author.name }}[bot]
+          # GH_NAME is going to be used raw in a URL in an unquoted commandline, it can't contain spaces
+          # it's supposed to be a username, not a name, but it doesn't need to be a valid username,
+          # at least not with GITHUB_TOKEN (for a PAT, may need to match, unsure)
+          GH_NAME: ${{ github.event.head_commit.author.username || github.repository.owner }}[bot]
           WIKI_PUSH_MESSAGE: 'Docs for ${{ github.repository }}/${{ github.event.head_commit.id }} : ${{ github.event.head_commit.message }}'
