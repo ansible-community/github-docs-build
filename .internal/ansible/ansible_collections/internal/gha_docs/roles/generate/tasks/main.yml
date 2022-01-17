@@ -5,7 +5,7 @@
 
 - name: Ensure output dir exists
   ansible.builtin.file:
-    path: '{{ output }}'
+    path: '{{ output | dirname }}'
     state: directory
     mode: '644'
 
