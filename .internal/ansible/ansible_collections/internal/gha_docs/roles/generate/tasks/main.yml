@@ -17,6 +17,7 @@
     reference: '{{ file | basename }}'
     jobs: '{{ _src.jobs }}'
     inputs: '{{ _src[true].workflow_call.inputs | default({}) }}'
+    secrets: '{{ _src[true].workflow_call.secrets | default({}) }}'
     outputs: '{{ _src[true].workflow_call.outputs | default({}) }}'
   ansible.builtin.template:
     src: workflow.md.j2
