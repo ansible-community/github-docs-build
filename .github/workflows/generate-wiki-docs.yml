@@ -2,7 +2,7 @@
 name: Generate Wiki Docs
 on:
   push:
-    branches: [main, 'content-docs/generate-fixups']
+    branches: [main]
     paths:
       - .github/workflows/_shared*
       - .github/workflows/generate-wiki-docs.yml
