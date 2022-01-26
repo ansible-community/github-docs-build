@@ -104,10 +104,16 @@ jobs:
           assert output_hash == expected_hash
           assert artifact_hash == output_hash
 
-      - name: Simple 3 - assert artifact url
-        # this URL only goes to the run page, not to an individual artifact
-        # so all we're really checking here is that it's a valid URL that's accessible
-        run: wget '${{ steps.simple3.outputs.artifact-url }}'
+      - name: Simple 3 - bash asserts
+        run: |
+          set -eu
+
+          # this URL only goes to the run page, not to an individual artifact
+          # so all we're really checking here is that it's a valid URL that's accessible
+          wget '${{ steps.simple3.outputs.artifact-url }}'
+
+          # ensure that the html directory is not present in the downloaded artifact
+          test ! -d "${{ steps.simple3-artifact.outputs.download-path }}/html"
 
       - name: Simple 4 invoke - with copy, with artifact
         id: simple4
@@ -140,7 +146,13 @@ jobs:
           assert output_hash == original_build_hash
           assert artifact_hash == output_hash
 
-      - name: Simple 4 - assert artifact url
-        # this URL only goes to the run page, not to an individual artifact
-        # so all we're really checking here is that it's a valid URL that's accessible
-        run: wget '${{ steps.simple4.outputs.artifact-url }}'
+      - name: Simple 4 - bash asserts
+        run: |
+          set -eu
+
+          # this URL only goes to the run page, not to an individual artifact
+          # so all we're really checking here is that it's a valid URL that's accessible
+          wget '${{ steps.simple4.outputs.artifact-url }}'
+
+          # ensure that the html directory is not present in the downloaded artifact
+          test ! -d "${{ steps.simple4-artifact.outputs.download-path }}/html"
