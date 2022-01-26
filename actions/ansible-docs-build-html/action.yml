@@ -69,7 +69,7 @@ runs:
       if: fromJSON(inputs.artifact-upload)
       uses: actions/upload-artifact@v2
       with:
-        path: ${{ steps.build.outputs.build-html }}/
+        path: ${{ steps.build.outputs.build-html }}
         name: ${{ inputs.artifact-name }}
         retention-days: ${{ fromJSON(inputs.artifact-retention-days) }}
 
