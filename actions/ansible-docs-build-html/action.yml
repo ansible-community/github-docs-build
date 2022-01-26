@@ -58,7 +58,7 @@ runs:
         if [[ "$COPY_BUILD" != "" ]] ; then
             echo "::group::Copy the build files"
             mkdir -p "$COPY_BUILD"
-            rsync -avc --delete-after "$HTML" "$COPY_BUILD"
+            rsync -avc --delete-after "$HTML/" "$COPY_BUILD"
             echo "::set-output name=build-html::$COPY_BUILD"
             echo "::endgroup::"
         else
