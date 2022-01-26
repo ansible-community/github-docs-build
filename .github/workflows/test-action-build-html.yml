@@ -181,9 +181,9 @@ jobs:
           output_hash = r'${{ steps.simple5.outputs.hash }}'
           output_build_html = r'${{ steps.simple5.outputs.build-html }}'
           artifact_hash = r'${{ hashFiles(steps.simple5-artifact.outputs.download-path) }}'
-          original_build_hash = r'${{ hashFiles('.test/simple-build/build/html') }}'
+          original_build_hash = r'${{ hashFiles('.test/simple-build/build/html/') }}'
 
-          assert output_build_html == '.copies/simple5/html'
+          assert output_build_html == '.copies/simple5/html/'
           assert output_hash == expected_hash
           assert output_hash == original_build_hash
           assert artifact_hash == output_hash
