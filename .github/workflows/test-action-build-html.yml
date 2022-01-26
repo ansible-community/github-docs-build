@@ -6,12 +6,12 @@ on:
     paths:
       - .test/**
       - .github/workflows/test-action-build-html.yml
-      - actions/ansibe-docs-build-html/**
+      - actions/ansible-docs-build-html/**
   pull_request:
     paths:
       - .test/**
       - .github/workflows/test-action-build-html.yml
-      - actions/ansibe-docs-build-html/**
+      - actions/ansible-docs-build-html/**
 
 jobs:
   tests:
