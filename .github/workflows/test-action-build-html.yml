@@ -156,3 +156,45 @@ jobs:
 
           # ensure that the html directory is not present in the downloaded artifact
           test ! -d "${{ steps.simple4-artifact.outputs.download-path }}/html"
+
+      - name: Simple 5 invoke - with copy, with artifact, trailing slash in input
+        id: simple5
+        uses: ./actions/ansible-docs-build-html
+        with:
+          build-script: .test/simple-build/build.sh
+          build-html: .test/simple-build/build/html/
+          copy-build: .copies/simple5/html/
+          artifact-retention-days: 1
+          artifact-name: tests-simple5
+
+      - name: Simple 5 - Download artifacts
+        uses: actions/download-artifact@v2
+        id: simple5-artifact
+        with:
+          name: ${{ steps.simple5.outputs.artifact-name }}
+          path: .artifacts/simple5
+
+      - name: Simple 5 - assert
+        shell: python
+        run: |
+          expected_hash = r'${{ hashFiles('.test/simple-build/src') }}'
+          output_hash = r'${{ steps.simple5.outputs.hash }}'
+          output_build_html = r'${{ steps.simple5.outputs.build-html }}'
+          artifact_hash = r'${{ hashFiles(steps.simple5-artifact.outputs.download-path) }}'
+          original_build_hash = r'${{ hashFiles('.test/simple-build/build/html') }}'
+
+          assert output_build_html == '.copies/simple5/html'
+          assert output_hash == expected_hash
+          assert output_hash == original_build_hash
+          assert artifact_hash == output_hash
+
+      - name: Simple 5 - bash asserts
+        run: |
+          set -eu
+
+          # this URL only goes to the run page, not to an individual artifact
+          # so all we're really checking here is that it's a valid URL that's accessible
+          wget '${{ steps.simple5.outputs.artifact-url }}'
+
+          # ensure that the html directory is not present in the downloaded artifact
+          test ! -d "${{ steps.simple5-artifact.outputs.download-path }}/html"
