@@ -5,12 +5,12 @@ on:
     paths:
       - .test/**
       - .github/workflows/test-action-build-init.yml
-      - actions/ansibe-docs-build-init/**
+      - actions/ansible-docs-build-init/**
   pull_request:
     paths:
       - .test/**
       - .github/workflows/test-action-build-init.yml
-      - actions/ansibe-docs-build-init/**
+      - actions/ansible-docs-build-init/**
 
 jobs:
   tests:
