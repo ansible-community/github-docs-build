@@ -14,7 +14,7 @@ on:
 
 jobs:
   tests:
-    name: Init tests
+    name: Init [skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -34,6 +34,7 @@ jobs:
         include:
           - skip-init: true
             dest: .test/simple-build
+            lenient: false  # unused but needs a value
 
     steps:
       - name: Checkout
