@@ -18,6 +18,12 @@ inputs:
       antsibull and the contents of the requirements.txt file in dest-dir.
     required: false
     default: 'false'
+  fail-on-error:
+    description: |
+      Corresponds to the --fail-on-error flag in antsibull. Fails if plugins cannot be parsed.
+      Has no effect if skip-init is true.
+    required: false
+    default: 'false'
   lenient:
     description: |
       Corresponds to the --lenient flag for antsibull sphinx-init.
@@ -62,7 +68,7 @@ runs:
             echo "::endgroup::"
 
             echo "::group::Initialize Sphinx"
-            antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }}
+            antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.fail-on-error) && '--fail-on-error' || '' }} ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }}
             echo "::endgroup::"
         fi
 

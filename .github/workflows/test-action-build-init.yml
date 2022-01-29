@@ -14,7 +14,7 @@ on:
 
 jobs:
   tests:
-    name: Init [skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}]
+    name: Init [skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -29,6 +29,9 @@ jobs:
           - ''  # there is no default so this will be ok
           - main
         lenient:
+          - true
+          - false
+        fail-on-error:
           - true
           - false
         include:
@@ -90,4 +93,10 @@ jobs:
           # if lenient == 'true', the grep should fail and end up running the true command
           # if lenient == 'false', the grep should succeed and never run the false command
           # short circuit if skip-init is 'true'
-          ${{ matrix.skip-init }} || grep '^nitpicky = True$' conf.py || ${{ matrix.lenient }}
+          ${{ matrix.skip-init }} || grep '^nitpicky = True$' conf.py || ${{ matrix.lenient }} || exit 1
+
+          # check if fail-on-error mode was used
+          # if fail-on-error == 'true', the grep should fail (!succeed) and end up running the true command
+          # if fail-on-error == 'false', the grep should succeed (!fail) and never run the false command
+          # short circuit if skip-init is 'true'
+          ${{ matrix.skip-init }} || ! grep '--fail-on-error' conf.py || ${{ matrix.fail-on-error }} || exit 1
