@@ -25,6 +25,9 @@ jobs:
           - 'fake.collection'
           - 'first.collection second.collection'
         dest: ['']
+        antsibull-version:
+          - ''  # there is no default so this will be ok
+          - main
         include:
           - skip-init: true
             dest: .test/simple-build

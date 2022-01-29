@@ -18,6 +18,11 @@ inputs:
       antsibull and the contents of the requirements.txt file in dest-dir.
     required: false
     default: 'false'
+  antsibull-version:
+    description: |
+      The version of antsibull to install. When set, it refers to a git ref from which to install.
+      If not set, the latest version from PyPI is installed.
+    required: false
 outputs:
   build-script:
     description: The path of the build script to execute.
