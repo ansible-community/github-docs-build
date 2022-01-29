@@ -55,6 +55,7 @@ jobs:
           # please keep in sync!
           dest-dir: ${{ matrix.dest || format('{0}/{1}', runner.temp, '/docsbuild') }}
           skip-init: ${{ matrix.skip-init }}
+          antsibull-version: ${{ matrix.antsibull-version }}
 
       - name: assert
         env:
