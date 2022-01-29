@@ -89,4 +89,5 @@ jobs:
           # check if lenient mode was used
           # if lenient == 'true', the grep should fail and end up running the true command
           # if lenient == 'false', the grep should succeed and never run the false command
-          grep '^nitpicky = True$' conf.py || ${{ matrix.lenient }}
+          # short circuit if skip-init is 'true'
+          ${{ matrix.skip-init }} || grep '^nitpicky = True$' conf.py || ${{ matrix.lenient }}
