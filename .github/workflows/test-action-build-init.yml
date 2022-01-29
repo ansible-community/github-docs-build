@@ -14,7 +14,7 @@ on:
 
 jobs:
   tests:
-    name: Init [skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}]
+    name: Init [ver=${{ matrix.antsibull-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
