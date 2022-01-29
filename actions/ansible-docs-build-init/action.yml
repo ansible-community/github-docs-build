@@ -62,7 +62,7 @@ runs:
             echo "::endgroup::"
 
             echo "::group::Initialize Sphinx"
-            antsibull-docs sphinx-init --use-current --dest-dir ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} "${{ inputs.dest-dir }}" ${{ inputs.collections }}
+            antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }}
             echo "::endgroup::"
         fi
 
