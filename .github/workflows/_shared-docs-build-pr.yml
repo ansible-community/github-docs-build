@@ -26,6 +26,22 @@ on:
         description: A directory relative to the checkout where the init process has already been run.
         required: false
         type: string
+      init-lenient:
+        description: Use the lenient option during build init. Has no effect if init-dest-dir is supplied.
+        required: false
+        type: boolean
+        default: false
+      init-fail-on-error:
+        description: Use the fail-on-error option during build init. Has no effect if init-dest-dir is supplied.
+        required: false
+        type: boolean
+        default: false
+      init-antsibull-version:
+        description: |
+          The version of antsibull to use during build init. Has no effect if init-dest-dir is supplied.
+          If not supplied, the latest version from PyPI is used. If supplied, must be a git ref from the antsibull repository.
+        required: false
+        type: string
       artifact-name:
         description: The name of the artifact to upload.
         required: false
@@ -193,6 +209,9 @@ jobs:
           collections: ${{ inputs.collection-name }}
           dest-dir: ${{ steps.vars.outputs.init-dir-base }}
           skip-init: ${{ steps.vars.outputs.skip-init }}
+          antsibull-version: '${{ inputs.init-antsibull-version }}'
+          lenient: ${{ inputs.init-lenient }}
+          fail-on-error: ${{ inputs.init-fail-on-error }}
 
       - name: Build BASE
         id: build-base
@@ -222,6 +241,9 @@ jobs:
           collections: ${{ inputs.collection-name }}
           dest-dir: ${{ steps.vars.outputs.init-dir-head }}
           skip-init: ${{ steps.vars.outputs.skip-init }}
+          antsibull-version: '${{ inputs.init-antsibull-version }}'
+          lenient: ${{ inputs.init-lenient }}
+          fail-on-error: ${{ inputs.init-fail-on-error }}
 
       - name: Build HEAD
         id: build-head
