@@ -28,6 +28,9 @@ jobs:
         antsibull-version:
           - ''  # there is no default so this will be ok
           - main
+        lenient:
+          - true
+          - false
         include:
           - skip-init: true
             dest: .test/simple-build
@@ -56,6 +59,7 @@ jobs:
           dest-dir: ${{ matrix.dest || format('{0}/{1}', runner.temp, '/docsbuild') }}
           skip-init: ${{ matrix.skip-init }}
           antsibull-version: ${{ matrix.antsibull-version }}
+          lenient: ${{ matrix.lenient }}
 
       - name: assert
         env:
@@ -80,3 +84,8 @@ jobs:
           pip freeze > "${{ runner.temp }}/post-freeze.txt"
 
           cmp "${{ runner.temp }}/pre-freeze.txt" "${{ runner.temp }}/post-freeze.txt" || exit 1
+
+          # check if lenient mode was used
+          # if lenient == 'true', the grep should fail and end up running the true command
+          # if lenient == 'false', the grep should succeed and never run the false command
+          grep '^nitpicky = True$' conf.py || ${{ matrix.lenient }}
