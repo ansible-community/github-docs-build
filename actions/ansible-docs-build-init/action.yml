@@ -36,10 +36,17 @@ runs:
   steps:
     - name: Install Antsibull and Initialize Sphinx
       id: init
+      env:
+        PIP_DISABLE_PIP_VERSION_CHECK: '1'
       shell: bash
       run: |
         echo "::group::Installing Antsibull"
-        pip install antsibull --disable-pip-version-check
+        if [[ "${{ inputs.antsibull-version }}" != "" ]] ; then
+            pip install https://github.com/ansible-community/antsibull/archive/${{ inputs.antsibull-version }}.tar.gz
+        else
+            pip install antsibull
+        fi
+        antsibull-docs --version
         echo "::endgroup::"
 
         if [[ "${{ inputs.skip-init }}" != "true" ]] ; then
@@ -53,7 +60,7 @@ runs:
         fi
 
         echo "::group::Install additional requirements"
-        pip install -r "${{ inputs.dest-dir }}/requirements.txt" --disable-pip-version-check
+        pip install -r "${{ inputs.dest-dir }}/requirements.txt"
         echo "::endgroup::"
 
         echo "::set-output name=build-script::${{ inputs.dest-dir }}/build.sh"
