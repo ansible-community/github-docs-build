@@ -36,10 +36,6 @@ jobs:
         if: fromJSON(env.SHOULD_RUN)
         with:
           python-version: '3.9'
-          cache: pip
-          cache-dependency-path: |
-            **/requirements*.txt
-            **/build.sh
 
       - name: Install Ansible
         if: fromJSON(env.SHOULD_RUN)
