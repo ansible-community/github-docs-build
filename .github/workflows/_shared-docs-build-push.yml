@@ -67,7 +67,7 @@ jobs:
     steps:
       - name: Variable setup
         id: vars
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           script: |
             const inputs = ${{ toJSON(inputs) }}
@@ -102,15 +102,19 @@ jobs:
             core.setOutput('skip-init', skipInit)
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ inputs.python }}
+          cache: pip
+          cache-dependency-path: |
+            **/requirements*.txt
+            **/build.sh
 
       - name: Install Ansible
         run: pip install https://github.com/ansible/ansible/archive/${{ inputs.ansible-ref }}.tar.gz --disable-pip-version-check
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: ${{ steps.vars.outputs.checkout-path }}
 

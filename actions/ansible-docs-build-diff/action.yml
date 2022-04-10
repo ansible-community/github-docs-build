@@ -88,10 +88,10 @@ runs:
         echo "::group::Deleting files from ${{ inputs.build-html-b }}"
         find "${{ inputs.build-html-b }}" \( -name '*.js' -or -name '*.inv' \) -delete -print
         echo "::endgroup::"
-        
+
     - name: Create diff
       id: diff
-      uses: actions/github-script@v5
+      uses: actions/github-script@v6
       with:
         script: |
           // attribution: https://stackoverflow.com/a/3561711/3905079

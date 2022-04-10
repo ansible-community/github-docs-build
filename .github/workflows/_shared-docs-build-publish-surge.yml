@@ -27,12 +27,6 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: DEBUG
-        run: |
-          echo <<EOF
-          ${{ toJSON(inputs) }}
-          EOF
-
       - name: Check required
         if: inputs.action == 'publish' && inputs.artifact-name == ''
         run: |
