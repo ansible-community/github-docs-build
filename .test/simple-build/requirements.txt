@@ -1,10 +1,10 @@
-antsibull
+antsibull-docs
 ansible-pygments
 sphinx
 sphinx-ansible-theme
 
 # This is a package that is not likely to be installed as a dependency
-# of antsibull (which is usually used to generate this file),
+# of antsibull-docs (which is usually used to generate this file),
 # so that we can test that the additional requirements install worked.
 # Suggestions for a better candidate package are welcome!
 hvac
