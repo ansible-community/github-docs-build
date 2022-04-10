@@ -144,7 +144,7 @@ jobs:
     steps:
       - name: Variable setup
         id: vars
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           script: |
             const inputs = ${{ toJSON(inputs) }}
@@ -189,15 +189,19 @@ jobs:
             }
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ inputs.python }}
+          cache: pip
+          cache-dependency-path: |
+            **/requirements*.txt
+            **/build.sh
 
       - name: Install Ansible
         run: pip install https://github.com/ansible/ansible/archive/${{ inputs.ansible-ref }}.tar.gz --disable-pip-version-check
 
       - name: Checkout BASE
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           path: ${{ steps.vars.outputs.checkout-path }}
@@ -223,7 +227,7 @@ jobs:
           artifact-upload: 'false'
 
       - name: Checkout HEAD
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           # It would be better to use
           #
