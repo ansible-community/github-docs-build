@@ -14,7 +14,7 @@ on:
 
 jobs:
   tests:
-    name: Init [ver=${{ matrix.antsibull-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}]
+    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -25,8 +25,9 @@ jobs:
           - 'fake.collection'
           - 'first.collection second.collection'
         dest: ['']
-        antsibull-version:
+        antsibull-docs-version:
           - ''  # there is no default so this will be ok
+          - 1.0.0
           - main
         lenient:
           - true
@@ -63,7 +64,7 @@ jobs:
           # please keep in sync!
           dest-dir: ${{ matrix.dest || format('{0}/{1}', runner.temp, '/docsbuild') }}
           skip-init: ${{ matrix.skip-init }}
-          antsibull-version: ${{ matrix.antsibull-version }}
+          antsibull-docs-version: ${{ matrix.antsibull-docs-version }}
           lenient: ${{ matrix.lenient }}
 
       - name: assert

@@ -15,25 +15,25 @@ inputs:
   skip-init:
     description: |
       If 'true', dest-dir will be assumed to already be initialized, so this action will only install
-      antsibull and the contents of the requirements.txt file in dest-dir.
+      antsibull-docs and the contents of the requirements.txt file in dest-dir.
     required: false
     default: 'false'
   fail-on-error:
     description: |
-      Corresponds to the --fail-on-error flag in antsibull. Fails if plugins cannot be parsed.
+      Corresponds to the --fail-on-error flag in antsibull-docs. Fails if plugins cannot be parsed.
       Has no effect if skip-init is true.
     required: false
     default: 'false'
   lenient:
     description: |
-      Corresponds to the --lenient flag for antsibull sphinx-init.
+      Corresponds to the --lenient flag for antsibull-docs sphinx-init.
       By default, the build process will fail on warnings unless this is set to 'true'.
       Has no effect if skip-init is true.
     required: false
     default: 'false'
-  antsibull-version:
+  antsibull-docs-version:
     description: |
-      The version of antsibull to install. When set, it refers to a git ref from which to install.
+      The version of antsibull-docs to install. When set, it refers to a git ref from which to install.
       If not set, the latest version from PyPI is installed.
     required: false
 outputs:
@@ -47,17 +47,17 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Install Antsibull and Initialize Sphinx
+    - name: Install antsibull-docs and Initialize Sphinx
       id: init
       env:
         PIP_DISABLE_PIP_VERSION_CHECK: '1'
       shell: bash
       run: |
-        echo "::group::Installing Antsibull"
-        if [[ "${{ inputs.antsibull-version }}" != "" ]] ; then
-            pip install https://github.com/ansible-community/antsibull/archive/${{ inputs.antsibull-version }}.tar.gz
+        echo "::group::Installing antsibull-docs"
+        if [[ "${{ inputs.antsibull-docs-version }}" != "" ]] ; then
+            pip install https://github.com/ansible-community/antsibull-docs/archive/${{ inputs.antsibull-docs-version }}.tar.gz
         else
-            pip install antsibull
+            pip install antsibull-docs
         fi
         antsibull-docs --version
         echo "::endgroup::"

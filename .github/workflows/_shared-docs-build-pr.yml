@@ -36,10 +36,10 @@ on:
         required: false
         type: boolean
         default: false
-      init-antsibull-version:
+      init-antsibull-docs-version:
         description: |
-          The version of antsibull to use during build init. Has no effect if init-dest-dir is supplied.
-          If not supplied, the latest version from PyPI is used. If supplied, must be a git ref from the antsibull repository.
+          The version of antsibull-docs to use during build init. Has no effect if init-dest-dir is supplied.
+          If not supplied, the latest version from PyPI is used. If supplied, must be a git ref from the antsibull-docs repository.
         required: false
         type: string
       artifact-name:
@@ -209,7 +209,7 @@ jobs:
           collections: ${{ inputs.collection-name }}
           dest-dir: ${{ steps.vars.outputs.init-dir-base }}
           skip-init: ${{ steps.vars.outputs.skip-init }}
-          antsibull-version: '${{ inputs.init-antsibull-version }}'
+          antsibull-docs-version: '${{ inputs.init-antsibull-docs-version }}'
           lenient: ${{ inputs.init-lenient }}
           fail-on-error: ${{ inputs.init-fail-on-error }}
 
@@ -241,7 +241,7 @@ jobs:
           collections: ${{ inputs.collection-name }}
           dest-dir: ${{ steps.vars.outputs.init-dir-head }}
           skip-init: ${{ steps.vars.outputs.skip-init }}
-          antsibull-version: '${{ inputs.init-antsibull-version }}'
+          antsibull-docs-version: '${{ inputs.init-antsibull-docs-version }}'
           lenient: ${{ inputs.init-lenient }}
           fail-on-error: ${{ inputs.init-fail-on-error }}
 
