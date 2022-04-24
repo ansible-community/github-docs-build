@@ -234,6 +234,12 @@ jobs:
           ref: ${{ steps.vars.outputs.pr-checkout-ref }}
           path: ${{ steps.vars.outputs.checkout-path }}
 
+      - name: Show event information
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github.event) }}
+        run: |
+          echo "${{ GITHUB_CONTEXT }}"
+
       - name: Show HEAD commit log
         run: |
           git log
