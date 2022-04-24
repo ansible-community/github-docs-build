@@ -234,6 +234,18 @@ jobs:
           ref: ${{ steps.vars.outputs.pr-checkout-ref }}
           path: ${{ steps.vars.outputs.checkout-path }}
 
+      - name: Show HEAD commit log
+        run: |
+          git log
+        with:
+          path: ${{ steps.vars.outputs.checkout-path }}
+
+      - name: Show differences to main
+        run: |
+          git diff main || :
+        with:
+          path: ${{ steps.vars.outputs.checkout-path }}
+
       - name: Initialize the build environment (HEAD)
         id: init-head
         uses: ansible-community/github-docs-build/actions/ansible-docs-build-init@main
