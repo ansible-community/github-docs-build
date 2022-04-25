@@ -186,7 +186,7 @@ jobs:
 
             const mergeSha = '${{ github.event.pull_request.merge_commit_sha }}'
             if ('${{ github.event.action }}' == 'closed') {
-                core.setOutput('pr-checkout-ref', mergeSha)
+                core.setOutput('pr-checkout-ref', '${{ github.event.pull_request.merge_commit_sha }}')
             } else {
                 core.setOutput('pr-checkout-ref', 'refs/pull/${{ github.event.number }}/merge')
             }
