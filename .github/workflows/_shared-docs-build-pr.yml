@@ -175,15 +175,17 @@ jobs:
 
             core.setOutput('skip-init', skipInit)
 
-            // when a PR is first opened, the merge sha is blank
-            // when a PR is closed, the merge branch doesn't exist
-            // so let's set a var for the PR ref we'll checkout,
-            // using the merge SHA usually, but using the merge branch
-            // if the SHA is blank.
+            // The merge branch is what we want, but it doesn't exist
+            // on closed events. The merge SHA does exist though and
+            // should be correct. The merge SHA does not exist when a
+            // PR is first opened, and on subsequent updates it is
+            // tricky to use; used directly it is probably stale, and
+            // would need additional API calls to get the correct value.
+            // See also:
+            // - https://github.com/ansible-community/github-docs-build/issues/36
 
-            const mergeSha = '${{ github.event.pull_request.merge_commit_sha }}'
-            if (mergeSha != '') {
-                core.setOutput('pr-checkout-ref', mergeSha)
+            if ('${{ github.event.action }}' == 'closed') {
+                core.setOutput('pr-checkout-ref', '${{ github.event.pull_request.merge_commit_sha }}')
             } else {
                 core.setOutput('pr-checkout-ref', 'refs/pull/${{ github.event.number }}/merge')
             }
