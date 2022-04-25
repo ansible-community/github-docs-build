@@ -184,7 +184,6 @@ jobs:
             // See also:
             // - https://github.com/ansible-community/github-docs-build/issues/36
 
-            const mergeSha = '${{ github.event.pull_request.merge_commit_sha }}'
             if ('${{ github.event.action }}' == 'closed') {
                 core.setOutput('pr-checkout-ref', '${{ github.event.pull_request.merge_commit_sha }}')
             } else {
