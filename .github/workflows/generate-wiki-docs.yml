@@ -51,8 +51,8 @@ jobs:
 
       - name: Publish docs
         if: fromJSON(env.SHOULD_RUN)
-        # @v2 https://github.com/Andrew-Chen-Wang/github-wiki-action/releases/tag/v2
-        uses: Andrew-Chen-Wang/github-wiki-action@b386aca0ddc5ec22b6003ba4cb50fa0b17243f6c
+        # @v2 https://github.com/Andrew-Chen-Wang/github-wiki-action/releases/tag/v3
+        uses: Andrew-Chen-Wang/github-wiki-action@194d37ff03f5220e1baf7eb9d7c7ad7f3e1db30c
         env:  # this action is written such that the inputs must be specified as env vars
           # WIKI_DIR is going to be used with rsync, it MUST end in a forward slash [/]
           WIKI_DIR: ${{ env.WIKI }}/
