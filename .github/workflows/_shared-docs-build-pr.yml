@@ -96,6 +96,10 @@ on:
           ```
 
           </details>
+      extra-collections:
+        description: A space separated list of additional collections to install prior to building the documentation.
+        required: false
+        type: string
 
     outputs:
       artifact-name:
@@ -197,6 +201,13 @@ jobs:
 
       - name: Install Ansible
         run: pip install https://github.com/ansible/ansible/archive/${{ inputs.ansible-ref }}.tar.gz --disable-pip-version-check
+
+      - name: Install extra collections
+        shell: bash
+        run: |
+          if [[ "${{ inputs.extra-collections }}" != "" ]] ; then
+            ansible-galaxy collection install ${{ inputs.extra-collections }}
+          fi
 
       - name: Checkout BASE
         uses: actions/checkout@v3
