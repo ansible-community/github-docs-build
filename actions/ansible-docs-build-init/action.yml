@@ -36,6 +36,10 @@ inputs:
       The version of antsibull-docs to install. When set, it refers to a git ref from which to install.
       If not set, the latest version from PyPI is installed.
     required: false
+  provide-link-targets:
+    description: A comma separated list of link targets that should not cause reference errors. A small RST file will be created during the build which contains these labels.
+    required: false
+    type: string
 outputs:
   build-script:
     description: The path of the build script to execute.
@@ -69,6 +73,17 @@ runs:
 
             echo "::group::Initialize Sphinx"
             antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.fail-on-error) && '--fail-on-error' || '' }} ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }}
+            echo "::endgroup::"
+        fi
+
+        if [[ "${{ inputs.provide-link-targets }}" != "" ]]; then
+            echo "::group::Create small RST file for link"
+            mkdir -p "${{ inputs.dest-dir }}/rst"
+            echo ":orphan:" > "${{ inputs.dest-dir }}/rst/_targets.rst"
+            while read -r line; do
+              echo ".. _${line}:" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
+            done <<< "$(tr ',' '\n' <<< "${{ inputs.provide-link-targets }}")"
+            echo "This file just exists to provide link targets. Please ignore it." >> "${{ inputs.dest-dir }}/rst/_targets.rst"
             echo "::endgroup::"
         fi
 
