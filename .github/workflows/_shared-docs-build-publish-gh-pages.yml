@@ -46,7 +46,7 @@ jobs:
     name: Publish to GitHub Pages
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     outputs:
       url: ${{ steps.vars.outputs.url }}
     steps:
