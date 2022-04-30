@@ -25,7 +25,7 @@ on:
         type: string
       base-url:
         description: |
-          The base URL of the published site, ending with a forward slash '/'.'
+          The base URL of the published site, ending with a forward slash '/'.
           This is not used for the publishing process, but the resulting destination dir will be concatenated to it,
           and then returned in the workflow's outputs.
         required: false
