@@ -34,7 +34,7 @@ on:
     outputs:
       url:
         description: The destination path. If base-url was provided, it will be pre-pended.
-        value: ${{ steps.vars.outputs.url }}
+        value: ${{ jobs.publish-gh-pages.outputs.url }}
     secrets:
       GH_TOKEN:
         description: |
@@ -47,6 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      url: ${{ steps.vars.outputs.url }}
     steps:
       - name: Process variables
         id: vars
