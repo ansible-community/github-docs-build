@@ -87,8 +87,10 @@ jobs:
         run: mkdir -p html
 
       - name: Publish
-        # if: inputs.action == 'publish'
-        uses: peaceiris/actions-gh-pages@v3
+        # this action uses a token with contents:write, pinning to commit
+        # 068dc23d9710f1ba62e86896f84735d869951305 == v3.8.0
+        # https://github.com/peaceiris/actions-gh-pages/releases/tag/v3.8.0
+        uses: peaceiris/actions-gh-pages@068dc23d9710f1ba62e86896f84735d869951305
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           publish_dir: html
