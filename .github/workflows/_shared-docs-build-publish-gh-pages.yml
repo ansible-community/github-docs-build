@@ -1,5 +1,5 @@
 ---
-name: Ansible collection docs - publish to Surge
+name: Ansible collection docs - publish to GitHub Pages
 on:
   workflow_call:
     inputs:
@@ -7,26 +7,70 @@ on:
         description: The build artifact that contains the rendered HTML. Required when action == 'publish'
         required: false
         type: string
-      surge-site-name:
-        description: The full surge site domain to publish or teardown.
-        required: true
+      destination-dir:
+        description: |
+          The destination path within the published site. Should not start with a forward slash '/'.
+          If not given, the destination will be calculated based on what triggered the event.
+        required: false
         type: string
+
+    #   surge-site-name:
+    #     description: The full surge site domain to publish or teardown.
+    #     required: true
+    #     type: string
       action:
         description: Action to perform. 'publish' to publish the site, 'teardown' to tear it down.
         required: false
         default: 'publish'
         type: string
+      base-url:
+        description: |
+          The base URL of the published site, ending with a forward slash '/'.'
+          This is not used for the publishing process, but the resulting destination dir will be concatenated to it,
+          and then returned in the workflow's outputs.
+        required: false
+        type: string
+        default: ''
+    outputs:
+      url:
+        description: The destination path. If base-url was provided, it will be pre-pended.
+        value: ${{ steps.vars.outputs.url }}
     secrets:
-      SURGE_TOKEN:
-        description: The token used for publishing to surge.
+      github_token:
+        description: |
+          The token used for publishing to GitHub Pages.
+          Even when using the workflow secret, it must be passed explicitly.
         required: true
 jobs:
   publish-gh-pages:
-    name: Publish to Surge.sh
+    name: Publish to GitHub Pages
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
+      - name: Process variables
+        id: vars
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const inputs = ${{ toJSON(inputs) }}
+            var destination_dir = inputs['destination-dir']
+            var base_url = inputs['base-url']
+
+            if (destination_dir == '') {
+                const gh = ${{ toJSON(github) }}
+
+                if (gh['event_name'] == 'pull_request') {
+                    destination_dir = `pr/${gh['event']['number']}`
+                }
+                else {
+                    destination_dir = `${gh['ref_type']}/${gh['ref_name']}`
+                }
+            }
+
+            core.setOutput('dest', destination_dir)
+            core.setOutput('url', `${base_url}/${destination_dir}`)
+
       - name: Check required
         if: inputs.action == 'publish' && inputs.artifact-name == ''
         run: |
@@ -41,20 +85,14 @@ jobs:
           name: ${{ inputs.artifact-name }}
           path: html
 
-      - name: Install Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 14
-
-      - name: Install Surge
-        run: npm install -g surge@0.23.1
-
-      - name: Publish site
-        if: inputs.action == 'publish'
-        working-directory: html
-        run: surge ./ "${{ inputs.surge-site-name }}" --token ${{ secrets.SURGE_TOKEN }}
-
-      - name: Teardown site
+      - name: Teardown
         if: inputs.action == 'teardown'
-        run: surge teardown "${{ inputs.surge-site-name }}" --token ${{ secrets.SURGE_TOKEN }}
-        continue-on-error: true
+        run: mkdir -p html
+
+      - name: Publish
+        # if: inputs.action == 'publish'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.github_token }}
+          publish_dir: html
+          destination-dir: ${{ steps.vars.outputs.dest }}
