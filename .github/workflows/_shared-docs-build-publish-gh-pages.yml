@@ -62,7 +62,7 @@ jobs:
             if (destination_dir == '') {
                 const gh = ${{ toJSON(github) }}
 
-                if (gh['event_name'] == 'pull_request') {
+                if (gh['event_name'].startsWith('pull_request')) {
                     destination_dir = `pr/${gh['event']['number']}`
                 }
                 else {
