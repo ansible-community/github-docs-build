@@ -13,11 +13,6 @@ on:
           If not given, the destination will be calculated based on what triggered the event.
         required: false
         type: string
-
-    #   surge-site-name:
-    #     description: The full surge site domain to publish or teardown.
-    #     required: true
-    #     type: string
       action:
         description: Action to perform. 'publish' to publish the site, 'teardown' to tear it down.
         required: false
@@ -25,12 +20,12 @@ on:
         type: string
       base-url:
         description: |
-          The base URL of the published site, ending with a forward slash '/'.
+          The base URL of the published site. Do not include a trailing forward slash '/'.
           This is not used for the publishing process, but the resulting destination dir will be concatenated to it,
           and then returned in the workflow's outputs.
         required: false
         type: string
-        default: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+        default: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
     outputs:
       url:
         description: The destination path. If base-url was provided, it will be pre-pended.
