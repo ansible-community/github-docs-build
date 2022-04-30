@@ -30,7 +30,7 @@ on:
           and then returned in the workflow's outputs.
         required: false
         type: string
-        default: ''
+        default: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
     outputs:
       url:
         description: The destination path. If base-url was provided, it will be pre-pended.
@@ -39,7 +39,7 @@ on:
       GH_TOKEN:
         description: |
           The token used for publishing to GitHub Pages.
-          Even when using the workflow secret, it must be passed explicitly.
+          Even when using the workflow token, it must be passed explicitly.
         required: true
 jobs:
   publish-gh-pages:
