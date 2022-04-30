@@ -36,7 +36,7 @@ on:
         description: The destination path. If base-url was provided, it will be pre-pended.
         value: ${{ steps.vars.outputs.url }}
     secrets:
-      github_token:
+      GH_TOKEN:
         description: |
           The token used for publishing to GitHub Pages.
           Even when using the workflow secret, it must be passed explicitly.
@@ -93,6 +93,6 @@ jobs:
         # if: inputs.action == 'publish'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.github_token }}
+          github_token: ${{ secrets.GH_TOKEN }}
           publish_dir: html
           destination-dir: ${{ steps.vars.outputs.dest }}
