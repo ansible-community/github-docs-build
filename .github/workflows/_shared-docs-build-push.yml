@@ -22,6 +22,12 @@ on:
         required: false
         type: string
         default: stable-2.13
+      build-ref:
+        description: |
+          The ref from this repository to check out and build.
+          The default is the default of the actions/checkout action.
+        required: false
+        type: string
       init-dest-dir:
         description: A directory relative to the checkout where the init process has already been run.
         required: false
@@ -124,6 +130,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: ${{ steps.vars.outputs.checkout-path }}
+          ref: ${{ inputs.build-ref }}
 
       - name: Initialize the build environment
         id: init
