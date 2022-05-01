@@ -22,6 +22,12 @@ on:
         required: false
         type: string
         default: stable-2.13
+      build-ref:
+        description: |
+          The ref from this repository to check out and build.
+          The default is the default of the actions/checkout action.
+        required: false
+        type: string
       init-dest-dir:
         description: A directory relative to the checkout where the init process has already been run.
         required: false
@@ -42,6 +48,11 @@ on:
           If not supplied, the latest version from PyPI is used. If supplied, must be a git ref from the antsibull-docs repository.
         required: false
         type: string
+      artifact-upload:
+        description: Whether or not to upload the build as an artifact.
+        type: boolean
+        required: false
+        default: true
       artifact-name:
         description: The name of the artifact to upload.
         required: false
@@ -124,6 +135,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: ${{ steps.vars.outputs.checkout-path }}
+          ref: ${{ inputs.build-ref }}
 
       - name: Initialize the build environment
         id: init
@@ -143,3 +155,4 @@ jobs:
           build-script: ${{ steps.init.outputs.build-script }}
           build-html: ${{ steps.init.outputs.build-html }}
           artifact-name: ${{ inputs.artifact-name }}
+          artifact-upload: ${{ inputs.artifact-upload }}
