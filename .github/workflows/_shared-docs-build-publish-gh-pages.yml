@@ -1,0 +1,104 @@
+---
+name: Ansible collection docs - publish to GitHub Pages
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: The build artifact that contains the rendered HTML. Required when action == 'publish'
+        required: false
+        type: string
+      destination-dir:
+        description: |
+          The destination path within the published site. Should not start with a forward slash '/'.
+          If not given, the destination will be calculated based on what triggered the event:
+          - pull - pr/<pr #>
+          - push (branch) - branch/<branch name>
+          - push (tag) - tag/<tag name>
+        required: false
+        type: string
+      action:
+        description: Action to perform. 'publish' to publish the site, 'teardown' to tear it down.
+        required: false
+        default: 'publish'
+        type: string
+      base-url:
+        description: |
+          The base URL of the published site. Do not include a trailing forward slash '/'.
+          This is not used for the publishing process, but the resulting destination dir will be concatenated to it,
+          and then returned in the workflow's outputs.
+        required: false
+        type: string
+        default: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+    outputs:
+      url:
+        description: The destination path pre-pended with the base-url.
+        value: ${{ jobs.publish-gh-pages.outputs.url }}
+    secrets:
+      GH_TOKEN:
+        description: |
+          The token used for publishing to GitHub Pages.
+          Even when using the workflow token (secrets.GITHUB_TOKEN), it must be passed explicitly.
+        required: true
+jobs:
+  publish-gh-pages:
+    name: Publish to GitHub Pages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      url: ${{ steps.vars.outputs.url }}
+    steps:
+      - name: Process variables
+        id: vars
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const inputs = ${{ toJSON(inputs) }}
+            var destination_dir = inputs['destination-dir']
+            var base_url = inputs['base-url']
+
+            if (destination_dir == '') {
+                const gh = ${{ toJSON(github) }}
+
+                if (gh['event_name'].startsWith('pull_request')) {
+                    destination_dir = `pr/${gh['event']['number']}`
+                }
+                else {
+                    destination_dir = `${gh['ref_type']}/${gh['ref_name']}`
+                }
+            }
+
+            core.setOutput('dest', destination_dir)
+            core.setOutput('url', `${base_url}/${destination_dir}`)
+
+      - name: Check required
+        if: inputs.action == 'publish' && inputs.artifact-name == ''
+        run: |
+          echo "::error title=Missing artifact-name::action was 'publish' but artifact-name was not supplied."
+          exit 1
+
+      - name: Retrieve rendered docs
+        if: inputs.action == 'publish'
+        id: download
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: html
+
+      - name: Teardown source
+        if: inputs.action == 'teardown'
+        run: mkdir -p html
+
+      - name: Publish
+        # this action uses a token with contents:write, pinning to commit
+        # 068dc23d9710f1ba62e86896f84735d869951305 == v3.8.0
+        # https://github.com/peaceiris/actions-gh-pages/releases/tag/v3.8.0
+        uses: peaceiris/actions-gh-pages@068dc23d9710f1ba62e86896f84735d869951305
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          publish_dir: html
+          keep_files: false  # with destination_dir, this applies only to the chosen dir
+          destination_dir: ${{ steps.vars.outputs.dest }}
+          # NOTE: do not use the force_orphan (keep_history) option.
+          # It does not yet work correctly with keep_files and destination_dir:
+          # - https://github.com/peaceiris/actions-gh-pages/issues/455

@@ -21,7 +21,7 @@ on:
         description: The token used for publishing to surge.
         required: true
 jobs:
-  build-ansible-docs:
+  publish-surge:
     name: Publish to Surge.sh
     runs-on: ubuntu-latest
     permissions:
