@@ -10,7 +10,10 @@ on:
       destination-dir:
         description: |
           The destination path within the published site. Should not start with a forward slash '/'.
-          If not given, the destination will be calculated based on what triggered the event.
+          If not given, the destination will be calculated based on what triggered the event:
+          - pull - pr/<pr #>
+          - push (branch) - branch/<branch name>
+          - push (tag) - tag/<tag name>
         required: false
         type: string
       action:
@@ -28,13 +31,13 @@ on:
         default: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
     outputs:
       url:
-        description: The destination path. If base-url was provided, it will be pre-pended.
+        description: The destination path pre-pended with the base-url.
         value: ${{ jobs.publish-gh-pages.outputs.url }}
     secrets:
       GH_TOKEN:
         description: |
           The token used for publishing to GitHub Pages.
-          Even when using the workflow token, it must be passed explicitly.
+          Even when using the workflow token (secrets.GITHUB_TOKEN), it must be passed explicitly.
         required: true
 jobs:
   publish-gh-pages:
@@ -82,7 +85,7 @@ jobs:
           name: ${{ inputs.artifact-name }}
           path: html
 
-      - name: Teardown
+      - name: Teardown source
         if: inputs.action == 'teardown'
         run: mkdir -p html
 
@@ -94,4 +97,8 @@ jobs:
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           publish_dir: html
+          keep_files: false  # with destination_dir, this applies only to the chosen dir
           destination_dir: ${{ steps.vars.outputs.dest }}
+          # NOTE: do not use the force_orphan (keep_history) option.
+          # It does not yet work correctly with keep_files and destination_dir:
+          # - https://github.com/peaceiris/actions-gh-pages/issues/455
