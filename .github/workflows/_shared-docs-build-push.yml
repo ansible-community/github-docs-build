@@ -48,6 +48,11 @@ on:
           If not supplied, the latest version from PyPI is used. If supplied, must be a git ref from the antsibull-docs repository.
         required: false
         type: string
+      artifact-upload:
+        description: Whether or not to upload the build as an artifact.
+        type: boolean
+        required: false
+        default: true
       artifact-name:
         description: The name of the artifact to upload.
         required: false
@@ -150,3 +155,4 @@ jobs:
           build-script: ${{ steps.init.outputs.build-script }}
           build-html: ${{ steps.init.outputs.build-html }}
           artifact-name: ${{ inputs.artifact-name }}
+          artifact-upload: ${{ inputs.artifact-upload }}
