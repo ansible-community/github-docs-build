@@ -95,4 +95,3 @@ jobs:
           github_token: ${{ secrets.GH_TOKEN }}
           publish_dir: html
           destination_dir: ${{ steps.vars.outputs.dest }}
-          force_orphan: true
