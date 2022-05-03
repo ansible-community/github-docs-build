@@ -1,0 +1,26 @@
+# A simple workflow that runs a strict build against pushes
+# to main, stable branches, and tags, and also runs once a day.
+# This ensures ongoing healthy, buildable docs.
+name: Collection Docs
+concurrency:
+  group: docs-push-${{ github.sha }}
+  cancel-in-progress: true
+on:
+  push:
+    branches:
+      - main
+      - stable-*
+    tags:
+      - '*'
+  schedule:
+    - cron: '0 13 * * *'
+
+jobs:
+  build-docs:
+    permissions:
+      contents: read
+    name: Build Ansible Docs
+    uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-push.yml@main
+    with:
+      init-lenient: false
+      init-fail-on-error: true
