@@ -71,7 +71,7 @@ jobs:
           skip-init: ${{ matrix.skip-init }}
           antsibull-docs-version: ${{ matrix.antsibull-docs-version }}
           lenient: ${{ matrix.lenient }}
-          provide-links-safely: ${{ matrix.provide-links-safely }}
+          provide-link-targets: ${{ matrix.provide-links-safely }}
 
       - name: assert
         env:
