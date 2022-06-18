@@ -35,11 +35,16 @@ jobs:
         fail-on-error:
           - true
           - false
+        provide-links-safely:
+          - |
+            outside_reference_1
+            outside_reference_2
         include:
           - skip-init: true
             dest: .test/simple-build
             lenient: false  # unused but needs a value
             fail-on-error: false  # unused but needs a value
+            provide-links-safely: ''
 
     steps:
       - name: Checkout
@@ -66,6 +71,7 @@ jobs:
           skip-init: ${{ matrix.skip-init }}
           antsibull-docs-version: ${{ matrix.antsibull-docs-version }}
           lenient: ${{ matrix.lenient }}
+          provide-links-safely: ${{ matrix.provide-links-safely }}
 
       - name: assert
         env:
@@ -102,3 +108,10 @@ jobs:
           # if fail-on-error == 'false', the grep should succeed (!fail) and never run the false command
           # short circuit if skip-init is 'true'
           ${{ matrix.skip-init }} || ! grep -- '--fail-on-error' conf.py || ${{ matrix.fail-on-error }} || exit 1
+
+          # check if provide-links-safely was used
+          # :orphan: and the labels mentioned in provide-links-safely should end up in rst/_targets.rst
+          # short circuit if skip-init is 'true'
+          ${{ matrix.skip-init }} || grep -- '^:orphan:$' rst/_targets.rst || exit 1
+          ${{ matrix.skip-init }} || grep -- '^.. _outside_reference_1:$' rst/_targets.rst || exit 1
+          ${{ matrix.skip-init }} || grep -- '^.. _outside_reference_2:$' rst/_targets.rst || exit 1
