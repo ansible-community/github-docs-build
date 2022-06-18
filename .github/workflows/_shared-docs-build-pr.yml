@@ -101,7 +101,7 @@ on:
         required: false
         type: string
       provide-link-targets:
-        description: A comma separated list of link targets that should not cause reference errors. A small RST file will be created during the build which contains these labels.
+        description: A newline separated list of link targets that should not cause reference errors. A small RST file will be created during the build which contains these labels.
         required: false
         type: string
 

@@ -37,7 +37,7 @@ inputs:
       If not set, the latest version from PyPI is installed.
     required: false
   provide-link-targets:
-    description: A comma separated list of link targets that should not cause reference errors. A small RST file will be created during the build which contains these labels.
+    description: A newline separated list of link targets that should not cause reference errors. A small RST file will be created during the build which contains these labels.
     required: false
     type: string
 outputs:
@@ -82,7 +82,7 @@ runs:
             echo ":orphan:" > "${{ inputs.dest-dir }}/rst/_targets.rst"
             while read -r line; do
               echo ".. _${line}:" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
-            done <<< "$(tr ',' '\n' <<< "${{ inputs.provide-link-targets }}")"
+            done <<< "${{ inputs.provide-link-targets }}"
             echo "This file just exists to provide link targets. Please ignore it." >> "${{ inputs.dest-dir }}/rst/_targets.rst"
             echo "::endgroup::"
         fi
