@@ -14,7 +14,7 @@ on:
 
 jobs:
   tests:
-    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}]
+    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}, provide-link-targets=${{ matrix.provide-link-targets }}]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -36,6 +36,7 @@ jobs:
           - true
           - false
         provide-link-targets:
+          - ''
           - |
             outside_reference_1
             outside_reference_2
@@ -109,9 +110,13 @@ jobs:
           # short circuit if skip-init is 'true'
           ${{ matrix.skip-init }} || ! grep -- '--fail-on-error' conf.py || ${{ matrix.fail-on-error }} || exit 1
 
-          # check if provide-link-targets was used
+          # check if provide-link-targets was used (being no empty)
           # :orphan: and the labels mentioned in provide-link-targets should end up in rst/_targets.rst
-          # short circuit if skip-init is 'true'
-          ${{ matrix.skip-init }} || grep -- '^:orphan:$' rst/_targets.rst || exit 1
-          ${{ matrix.skip-init }} || grep -- '^.. _outside_reference_1:$' rst/_targets.rst || exit 1
-          ${{ matrix.skip-init }} || grep -- '^.. _outside_reference_2:$' rst/_targets.rst || exit 1
+          # short circuit if skip-init is 'true' or matrix.provide-link-targets is empty
+          ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^:orphan:$' rst/_targets.rst || exit 1
+          ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^.. _outside_reference_1:$' rst/_targets.rst || exit 1
+          ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^.. _outside_reference_2:$' rst/_targets.rst || exit 1
+
+          # check if provide-link-targets was not used when being empty
+          # short circuit if skip-init is 'true' or matrix.provide-link-targets is not empty
+          ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets != '' }} || ! test -e rst/_targets.rst || exit 1
