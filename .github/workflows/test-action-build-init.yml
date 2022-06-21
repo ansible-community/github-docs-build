@@ -14,7 +14,7 @@ on:
 
 jobs:
   tests:
-    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}]
+    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}, link-targets=${{ matrix.provide-link-targets != '' }}]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -35,11 +35,17 @@ jobs:
         fail-on-error:
           - true
           - false
+        provide-link-targets:
+          - ''
+          - |
+            outside_reference_1
+            outside_reference_2
         include:
           - skip-init: true
             dest: .test/simple-build
             lenient: false  # unused but needs a value
             fail-on-error: false  # unused but needs a value
+            provide-link-targets: ''
 
     steps:
       - name: Checkout
@@ -66,6 +72,7 @@ jobs:
           skip-init: ${{ matrix.skip-init }}
           antsibull-docs-version: ${{ matrix.antsibull-docs-version }}
           lenient: ${{ matrix.lenient }}
+          provide-link-targets: ${{ matrix.provide-link-targets }}
 
       - name: assert
         env:
@@ -102,3 +109,14 @@ jobs:
           # if fail-on-error == 'false', the grep should succeed (!fail) and never run the false command
           # short circuit if skip-init is 'true'
           ${{ matrix.skip-init }} || ! grep -- '--fail-on-error' conf.py || ${{ matrix.fail-on-error }} || exit 1
+
+          # check if provide-link-targets was used (being no empty)
+          # :orphan: and the labels mentioned in provide-link-targets should end up in rst/_targets.rst
+          # short circuit if skip-init is 'true' or matrix.provide-link-targets is empty
+          ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^:orphan:$' rst/_targets.rst || exit 1
+          ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^.. _outside_reference_1:$' rst/_targets.rst || exit 1
+          ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^.. _outside_reference_2:$' rst/_targets.rst || exit 1
+
+          # check if provide-link-targets was not used when being empty
+          # short circuit if skip-init is 'true' or matrix.provide-link-targets is not empty
+          ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets != '' }} || ! test -e rst/_targets.rst || exit 1
