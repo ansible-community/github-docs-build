@@ -84,6 +84,10 @@ runs:
             while read -r line; do
               echo ".. _${line}:" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
             done <<< "${_INPUT_PROVIDE_LINK_TARGETS}"
+            echo "" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
+            echo "Replacement stub for existing reference" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
+            echo "=======================================" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
+            echo "" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
             echo "This file just exists to provide link targets. Please ignore it." >> "${{ inputs.dest-dir }}/rst/_targets.rst"
             echo "::endgroup::"
         fi
