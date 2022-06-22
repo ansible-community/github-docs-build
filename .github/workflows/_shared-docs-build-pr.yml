@@ -27,12 +27,16 @@ on:
         required: false
         type: string
       init-lenient:
-        description: Use the lenient option during build init. Has no effect if init-dest-dir is supplied.
+        description: |
+          Use the lenient option during build init. Has no effect if init-dest-dir is supplied.
+          This is only passed to the HEAD build. The BASE build always runs with `true`.
         required: false
         type: boolean
         default: false
       init-fail-on-error:
-        description: Use the fail-on-error option during build init. Has no effect if init-dest-dir is supplied.
+        description: |
+          Use the fail-on-error option during build init. Has no effect if init-dest-dir is supplied.
+          This is only passed to the HEAD build. The BASE build always runs with `false`.
         required: false
         type: boolean
         default: false
@@ -227,8 +231,8 @@ jobs:
           dest-dir: ${{ steps.vars.outputs.init-dir-base }}
           skip-init: ${{ steps.vars.outputs.skip-init }}
           antsibull-docs-version: '${{ inputs.init-antsibull-docs-version }}'
-          lenient: ${{ inputs.init-lenient }}
-          fail-on-error: ${{ inputs.init-fail-on-error }}
+          lenient: true
+          fail-on-error: false
           provide-link-targets: ${{ inputs.provide-link-targets }}
 
       - name: Build BASE
