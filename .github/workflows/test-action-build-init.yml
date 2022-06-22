@@ -116,7 +116,7 @@ jobs:
           ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^:orphan:$' rst/_targets.rst || exit 1
           ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^.. _outside_reference_1:$' rst/_targets.rst || exit 1
           ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^.. _outside_reference_2:$' rst/_targets.rst || exit 1
-          ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || (pip install rstcheck && rstcheck --report WARNING rst/_targets.rst) || exit 1
+          ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || (pip install rstcheck && rstcheck --report warning rst/_targets.rst) || exit 1
 
           # check if provide-link-targets was not used when being empty
           # short circuit if skip-init is 'true' or matrix.provide-link-targets is not empty
