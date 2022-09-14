@@ -62,6 +62,10 @@ on:
         description: A space separated list of additional collections to install prior to building the documentation.
         required: false
         type: string
+      provide-link-targets:
+        description: A newline separated list of link targets that should not cause reference errors. A small RST file will be created during the build which contains these labels.
+        required: false
+        type: string
 
     outputs:
       artifact-name:
@@ -147,6 +151,7 @@ jobs:
           antsibull-docs-version: '${{ inputs.init-antsibull-docs-version }}'
           lenient: ${{ inputs.init-lenient }}
           fail-on-error: ${{ inputs.init-fail-on-error }}
+          provide-link-targets: ${{ inputs.provide-link-targets }}
 
       - name: Build
         id: build
