@@ -11,6 +11,9 @@ on:
       - .test/**
       - .github/workflows/test-action-build-init.yml
       - actions/ansible-docs-build-init/**
+  # Run once per week (Tuesday at 05:00 UTC)
+  schedule:
+    - cron: '0 5 * * 2'
 
 jobs:
   tests:
