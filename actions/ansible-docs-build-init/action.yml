@@ -40,6 +40,13 @@ inputs:
     description: A newline separated list of link targets that should not cause reference errors. A small RST file will be created during the build which contains these labels.
     required: false
     type: string
+  intersphinx-links:
+    description: |
+      A newline separated list of entries to add to the intersphinx_mapping in the generated conf.py.
+      Use the syntax `identifier:https://server/path` to add the identifier `identifier` with URL
+      `https://server/path`.
+    required: false
+    type: string
 outputs:
   build-script:
     description: The path of the build script to execute.
@@ -56,6 +63,7 @@ runs:
       env:
         PIP_DISABLE_PIP_VERSION_CHECK: '1'
         _INPUT_PROVIDE_LINK_TARGETS: ${{ inputs.provide-link-targets }}
+        _INPUT_INTERSPHINX_LINKS: ${{ inputs.intersphinx-links }}
       shell: bash
       run: |
         echo "::group::Installing antsibull-docs"
@@ -72,8 +80,21 @@ runs:
             mkdir -p "${{ inputs.dest-dir }}"
             echo "::endgroup::"
 
+            INTERSPHINX_ARGS=()
+
+            if [[ "${_INPUT_INTERSPHINX_LINKS}" != "" ]]; then
+                echo "::group::Building list of intersphinx links"
+                while read -r line; do
+                    if [ "${line}" != "" ]; then
+                        INTERSPHINX_ARGS+=("--intersphinx" "${line}")
+                    fi
+                done <<< "${_INPUT_INTERSPHINX_LINKS}"
+                echo "Intersphinx args: ${INTERSPHINX_ARGS[@]}"
+                echo "::endgroup::"
+            fi
+
             echo "::group::Initialize Sphinx"
-            antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.fail-on-error) && '--fail-on-error' || '' }} ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }}
+            antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.fail-on-error) && '--fail-on-error' || '' }} ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }} ${INTERSPHINX_ARGS[@]}
             echo "::endgroup::"
         fi
 

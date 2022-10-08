@@ -17,7 +17,7 @@ on:
 
 jobs:
   tests:
-    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}, link-targets=${{ matrix.provide-link-targets != '' }}]
+    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}, link-targets=${{ matrix.provide-link-targets != '' }}], intersphinx-links=${{ matrix.intersphinx-links }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -43,12 +43,20 @@ jobs:
           - |
             outside_reference_1
             outside_reference_2
+        intersphinx-links: ['']
         include:
           - skip-init: true
             dest: .test/simple-build
             lenient: false  # unused but needs a value
             fail-on-error: false  # unused but needs a value
             provide-link-targets: ''
+          - skip-init: false
+            dest: ''
+            lenient: false
+            fail-on-error: true
+            intersphinx-links: |
+              amazon_aws:https://ansible-collections.github.io/amazon.aws/branch/main/
+              ansible_devel:https://docs.ansible.com/ansible-core/devel/
 
     steps:
       - name: Checkout
@@ -76,6 +84,7 @@ jobs:
           antsibull-docs-version: ${{ matrix.antsibull-docs-version }}
           lenient: ${{ matrix.lenient }}
           provide-link-targets: ${{ matrix.provide-link-targets }}
+          intersphinx-links: ${{ matrix.intersphinx-links }}
 
       - name: assert
         env:
@@ -120,6 +129,13 @@ jobs:
           ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^.. _outside_reference_1:$' rst/_targets.rst || exit 1
           ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || grep -- '^.. _outside_reference_2:$' rst/_targets.rst || exit 1
           ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets == '' }} || (pip install --upgrade rstcheck && rstcheck --report-level warning rst/_targets.rst) || exit 1
+
+          # Check that intersphinx config was added to conf.py
+          # These end up wrapped in python formatting, so stick to a naive test.
+          ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'ansible_devel' conf.py || exit 1
+          ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'https://docs.ansible.com/ansible-core/devel/' conf.py || exit 1
+          ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'amazon_aws' conf.py || exit 1
+          ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'https://ansible-collections.github.io/amazon.aws/branch/main/' conf.py || exit 1
 
           # check if provide-link-targets was not used when being empty
           # short circuit if skip-init is 'true' or matrix.provide-link-targets is not empty
