@@ -51,6 +51,11 @@ on:
         required: false
         type: string
         default: ${{ github.event.repository.name }}_docs_${{ github.event.pull_request.head.sha }}
+      rst-artifact-name:
+        description: The name of the RST artifact to upload.
+        required: false
+        type: string
+        default: ${{ github.event.repository.name }}_rst_${{ github.event.pull_request.head.sha }}
       diff-size-limit:
         description: The max size of the diff, past which it will be truncated.
         required: false
@@ -251,6 +256,7 @@ jobs:
           build-html: ${{ steps.init-base.outputs.build-html }}
           copy-build: ${{ github.workspace }}/docsbuild/base
           artifact-upload: 'false'
+          rst-artifact-upload: 'false'
 
       - name: Checkout HEAD
         uses: actions/checkout@v3
@@ -283,8 +289,11 @@ jobs:
         with:
           build-script: ${{ steps.init-head.outputs.build-script }}
           build-html: ${{ steps.init-head.outputs.build-html }}
+          build-rst: ${{ steps.init-head.outputs.build-rst }}
           copy-build: ${{ github.workspace }}/docsbuild/head
+          copy-rst: ${{ github.workspace }}/rst
           artifact-name: ${{ inputs.artifact-name }}
+          rst-artifact-name: ${{ inputs.rst-artifact-name }}
 
       - name: Get a diff of the changes
         if: steps.build-base.outputs.hash != steps.build-head.outputs.hash

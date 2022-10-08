@@ -54,6 +54,9 @@ outputs:
   build-html:
     description: The path of the build's html output directory.
     value: ${{ steps.init.outputs.build-html }}
+  build-rst:
+    description: The path of the build's RST output directory.
+    value: ${{ steps.init.outputs.build-rst }}
 
 runs:
   using: composite
@@ -124,4 +127,5 @@ runs:
         echo "::endgroup::"
 
         echo "::set-output name=build-script::${{ inputs.dest-dir }}/build.sh"
+        echo "::set-output name=build-rst::${{ inputs.dest-dir }}/rst"
         echo "::set-output name=build-html::${{ inputs.dest-dir }}/build/html"
