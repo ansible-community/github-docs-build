@@ -59,10 +59,10 @@ runs:
             echo "::group::Copy the build files"
             mkdir -p "$COPY_BUILD"
             rsync -avc --delete-after "$HTML/" "$COPY_BUILD/"
-            echo "::set-output name=build-html::$COPY_BUILD"
+            echo "build-html=$COPY_BUILD" >> ${GITHUB_OUTPUT}
             echo "::endgroup::"
         else
-            echo "::set-output name=build-html::$HTML"
+            echo "build-html=$HTML" >> ${GITHUB_OUTPUT}
         fi
 
     - name: Upload artifact
@@ -77,7 +77,7 @@ runs:
       id: outs
       shell: bash
       run: |
-        echo "::set-output name=hash::${{ hashFiles(steps.build.outputs.build-html) }}"
+        echo "hash=${{ hashFiles(steps.build.outputs.build-html) }}" >> ${GITHUB_OUTPUT}
         if [[ "${{ inputs.artifact-upload }}" == "true" ]] ; then
-            echo "::set-output name=artifact-url::https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo "artifact-url=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> ${GITHUB_OUTPUT}
         fi

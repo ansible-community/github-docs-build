@@ -123,5 +123,5 @@ runs:
         pip install -r "${{ inputs.dest-dir }}/requirements.txt"
         echo "::endgroup::"
 
-        echo "::set-output name=build-script::${{ inputs.dest-dir }}/build.sh"
-        echo "::set-output name=build-html::${{ inputs.dest-dir }}/build/html"
+        echo "build-script=${{ inputs.dest-dir }}/build.sh" >> ${GITHUB_OUTPUT}
+        echo "build-html=${{ inputs.dest-dir }}/build/html" >> ${GITHUB_OUTPUT}
