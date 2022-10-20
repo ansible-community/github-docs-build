@@ -210,7 +210,7 @@ jobs:
             }
 
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python }}
 
