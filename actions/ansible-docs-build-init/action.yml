@@ -100,7 +100,6 @@ runs:
             fi
 
             echo "::group::Initialize Sphinx"
-            echo antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.fail-on-error) && '--fail-on-error' || '' }} ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} ${{ fromJSON(inputs.squash-hierarchy) && '--squash-hierarchy' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }} ${INTERSPHINX_ARGS[@]}
             antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.fail-on-error) && '--fail-on-error' || '' }} ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} ${{ fromJSON(inputs.squash-hierarchy) && '--squash-hierarchy' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }} ${INTERSPHINX_ARGS[@]}
             echo "::endgroup::"
         fi
