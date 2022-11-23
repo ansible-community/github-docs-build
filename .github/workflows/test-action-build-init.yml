@@ -86,7 +86,7 @@ jobs:
         id: init
         uses: ./actions/ansible-docs-build-init
         with:
-          collections: ${{ matrix.collection }}
+          collections: ${{ matrix.collections }}
           # combining runner.temp and /docsbuild copies the default from the action
           # please keep in sync!
           dest-dir: ${{ matrix.dest || format('{0}/{1}', runner.temp, '/docsbuild') }}
