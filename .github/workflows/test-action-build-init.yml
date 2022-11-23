@@ -44,12 +44,15 @@ jobs:
             outside_reference_1
             outside_reference_2
         intersphinx-links: ['']
+        squash-hierarchy:
+          - false
         include:
           - skip-init: true
             dest: .test/simple-build
             lenient: false  # unused but needs a value
             fail-on-error: false  # unused but needs a value
             provide-link-targets: ''
+            squash-hierarchy: false
           - skip-init: false
             dest: ''
             lenient: false
@@ -57,6 +60,13 @@ jobs:
             intersphinx-links: |
               amazon_aws:https://ansible-collections.github.io/amazon.aws/branch/main/
               ansible_devel:https://docs.ansible.com/ansible-core/devel/
+            squash-hierarchy: false
+          - skip-init: false
+            collections: foo.bar
+            dest: ''
+            lenient: false
+            fail-on-error: true
+            squash-hierarchy: true
 
     steps:
       - name: Checkout
@@ -85,6 +95,7 @@ jobs:
           lenient: ${{ matrix.lenient }}
           provide-link-targets: ${{ matrix.provide-link-targets }}
           intersphinx-links: ${{ matrix.intersphinx-links }}
+          squash-hierarchy: ${{ matrix.squash-hierarchy }}
 
       - name: assert
         env:
@@ -136,6 +147,9 @@ jobs:
           ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'https://docs.ansible.com/ansible-core/devel/' conf.py || exit 1
           ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'amazon_aws' conf.py || exit 1
           ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'https://ansible-collections.github.io/amazon.aws/branch/main/' conf.py || exit 1
+
+          # Check that the squash hierarchy flag was added
+          ${{ matrix.squash-hierarchy }} && grep -q -- ' --squash-hierarchy ' build.sh || exit 1
 
           # check if provide-link-targets was not used when being empty
           # short circuit if skip-init is 'true' or matrix.provide-link-targets is not empty

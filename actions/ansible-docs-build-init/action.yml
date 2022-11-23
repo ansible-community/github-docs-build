@@ -47,6 +47,12 @@ inputs:
       `https://server/path`.
     required: false
     type: string
+  squash-hierarchy:
+    description: |
+      If 'true', the collection documentation will be created at top-level and not in a subdirectory `namespace/collection_name/`.
+      This is only possible if 'collections' contains exactly one collection.
+    required: false
+    default: 'false'
 outputs:
   build-script:
     description: The path of the build script to execute.
@@ -94,7 +100,7 @@ runs:
             fi
 
             echo "::group::Initialize Sphinx"
-            antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.fail-on-error) && '--fail-on-error' || '' }} ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }} ${INTERSPHINX_ARGS[@]}
+            antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.fail-on-error) && '--fail-on-error' || '' }} ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} ${{ fromJSON(inputs.squash-hierarchy) && '--squash-hierarchy' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }} ${INTERSPHINX_ARGS[@]}
             echo "::endgroup::"
         fi
 
