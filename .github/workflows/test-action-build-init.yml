@@ -17,7 +17,7 @@ on:
 
 jobs:
   tests:
-    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}, link-targets=${{ matrix.provide-link-targets != '' }}], intersphinx-links=${{ matrix.intersphinx-links }}
+    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}, link-targets=${{ matrix.provide-link-targets != '' }}], intersphinx-links=${{ matrix.intersphinx-links }}, squash-hierarchy=${{ matrix.squash-hierarchy }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -102,6 +102,8 @@ jobs:
           output_build_script: ${{ steps.init.outputs.build-script }}
           output_build_html: ${{ steps.init.outputs.build-html }}
         run: |
+          set -x
+
           # check that the build script exists
           [ -f "$output_build_script" ] || exit 1
 
@@ -149,7 +151,7 @@ jobs:
           ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'https://ansible-collections.github.io/amazon.aws/branch/main/' conf.py || exit 1
 
           # Check that the squash hierarchy flag was added
-          ${{ matrix.squash-hierarchy }} && grep -q -- ' --squash-hierarchy ' build.sh || exit 1
+          ${{ matrix.squash-hierarchy }} && (grep -q -- ' --squash-hierarchy ' build.sh || exit 1)
 
           # check if provide-link-targets was not used when being empty
           # short circuit if skip-init is 'true' or matrix.provide-link-targets is not empty
