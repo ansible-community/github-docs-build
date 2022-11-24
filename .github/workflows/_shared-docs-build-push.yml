@@ -73,6 +73,12 @@ on:
           `https://server/path`.
         required: false
         type: string
+      squash-hierarchy:
+        description: |
+          If 'true', the collection documentation will be created at top-level and not in a subdirectory `namespace/collection_name/`.
+          Has no effect if init-dest-dir is supplied.
+        required: false
+        default: 'false'
 
     outputs:
       artifact-name:
@@ -160,6 +166,7 @@ jobs:
           fail-on-error: ${{ inputs.init-fail-on-error }}
           provide-link-targets: ${{ inputs.provide-link-targets }}
           intersphinx-links: ${{ inputs.intersphinx-links }}
+          squash-hierarchy: ${{ input.squash-hierarchy }}
 
       - name: Build
         id: build

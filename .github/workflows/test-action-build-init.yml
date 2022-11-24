@@ -17,7 +17,7 @@ on:
 
 jobs:
   tests:
-    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}, link-targets=${{ matrix.provide-link-targets != '' }}], intersphinx-links=${{ matrix.intersphinx-links }}
+    name: Init [ver=${{ matrix.antsibull-docs-version }}, skip=${{ matrix.skip-init }}, lenient=${{ matrix.lenient }}, fail-on-error=${{ matrix.fail-on-error }}, dest=${{ matrix.dest }}, collections=${{ matrix.collections }}, link-targets=${{ matrix.provide-link-targets != '' }}], intersphinx-links=${{ matrix.intersphinx-links }}, squash-hierarchy=${{ matrix.squash-hierarchy }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -44,12 +44,15 @@ jobs:
             outside_reference_1
             outside_reference_2
         intersphinx-links: ['']
+        squash-hierarchy:
+          - false
         include:
           - skip-init: true
             dest: .test/simple-build
             lenient: false  # unused but needs a value
             fail-on-error: false  # unused but needs a value
             provide-link-targets: ''
+            squash-hierarchy: false
           - skip-init: false
             dest: ''
             lenient: false
@@ -57,6 +60,13 @@ jobs:
             intersphinx-links: |
               amazon_aws:https://ansible-collections.github.io/amazon.aws/branch/main/
               ansible_devel:https://docs.ansible.com/ansible-core/devel/
+            squash-hierarchy: false
+          - skip-init: false
+            collections: foo.bar
+            dest: ''
+            lenient: false
+            fail-on-error: true
+            squash-hierarchy: true
 
     steps:
       - name: Checkout
@@ -76,7 +86,7 @@ jobs:
         id: init
         uses: ./actions/ansible-docs-build-init
         with:
-          collections: ${{ matrix.collection }}
+          collections: ${{ matrix.collections }}
           # combining runner.temp and /docsbuild copies the default from the action
           # please keep in sync!
           dest-dir: ${{ matrix.dest || format('{0}/{1}', runner.temp, '/docsbuild') }}
@@ -85,12 +95,15 @@ jobs:
           lenient: ${{ matrix.lenient }}
           provide-link-targets: ${{ matrix.provide-link-targets }}
           intersphinx-links: ${{ matrix.intersphinx-links }}
+          squash-hierarchy: ${{ matrix.squash-hierarchy }}
 
       - name: assert
         env:
           output_build_script: ${{ steps.init.outputs.build-script }}
           output_build_html: ${{ steps.init.outputs.build-html }}
         run: |
+          set -x
+
           # check that the build script exists
           [ -f "$output_build_script" ] || exit 1
 
@@ -136,6 +149,9 @@ jobs:
           ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'https://docs.ansible.com/ansible-core/devel/' conf.py || exit 1
           ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'amazon_aws' conf.py || exit 1
           ${{ matrix.skip-init }} || ${{ matrix.intersphinx-links == '' }} || grep -q -- 'https://ansible-collections.github.io/amazon.aws/branch/main/' conf.py || exit 1
+
+          # Check that the squash hierarchy flag was added
+          ${{ matrix.squash-hierarchy }} && (grep -q -- ' --squash-hierarchy ' build.sh || exit 1)
 
           # check if provide-link-targets was not used when being empty
           # short circuit if skip-init is 'true' or matrix.provide-link-targets is not empty
