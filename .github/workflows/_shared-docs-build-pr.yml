@@ -120,7 +120,8 @@ on:
           If 'true', the collection documentation will be created at top-level and not in a subdirectory `namespace/collection_name/`.
           Has no effect if init-dest-dir is supplied.
         required: false
-        default: 'false'
+        type: boolean
+        default: false
 
     outputs:
       artifact-name:
