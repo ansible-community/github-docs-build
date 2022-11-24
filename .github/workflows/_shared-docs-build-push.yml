@@ -166,7 +166,7 @@ jobs:
           fail-on-error: ${{ inputs.init-fail-on-error }}
           provide-link-targets: ${{ inputs.provide-link-targets }}
           intersphinx-links: ${{ inputs.intersphinx-links }}
-          squash-hierarchy: ${{ input.squash-hierarchy }}
+          squash-hierarchy: ${{ inputs.squash-hierarchy }}
 
       - name: Build
         id: build
