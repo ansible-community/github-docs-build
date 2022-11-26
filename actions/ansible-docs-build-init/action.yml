@@ -36,6 +36,12 @@ inputs:
       The version of antsibull-docs to install. When set, it refers to a git ref from which to install.
       If not set, the latest version from PyPI is installed.
     required: false
+  antsibull-docs-repository:
+    description: |
+      When antsibull-docs-version is specified, this is the GitHub repository to which antsibull-docs-version refers.
+      Has no effect if antsibull-docs-version is not supplied.
+    default: ansible-community/antsibull-docs
+    required: false
   provide-link-targets:
     description: A newline separated list of link targets that should not cause reference errors. A small RST file will be created during the build which contains these labels.
     required: false
@@ -74,7 +80,7 @@ runs:
       run: |
         echo "::group::Installing antsibull-docs"
         if [[ "${{ inputs.antsibull-docs-version }}" != "" ]] ; then
-            pip install https://github.com/ansible-community/antsibull-docs/archive/${{ inputs.antsibull-docs-version }}.tar.gz
+            pip install https://github.com/${{ inputs.antsibull-docs-repository || 'ansible-community/antsibull-docs' }}/archive/${{ inputs.antsibull-docs-version }}.tar.gz
         else
             pip install antsibull-docs
         fi
