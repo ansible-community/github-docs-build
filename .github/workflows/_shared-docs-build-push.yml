@@ -48,6 +48,13 @@ on:
           If not supplied, the latest version from PyPI is used. If supplied, must be a git ref from the antsibull-docs repository.
         required: false
         type: string
+      init-antsibull-docs-repository:
+        description: |
+          When init-antsibull-docs-version is specified, this is the GitHub repository to which init-antsibull-docs-version refers.
+          Has no effect if init-dest-dir is supplied, or if init-antsibull-docs-version is not supplied.
+        required: false
+        type: string
+        default: ansible-community/antsibull-docs
       artifact-upload:
         description: Whether or not to upload the build as an artifact.
         type: boolean
@@ -163,6 +170,7 @@ jobs:
           dest-dir: ${{ steps.vars.outputs.init-dir }}
           skip-init: ${{ steps.vars.outputs.skip-init }}
           antsibull-docs-version: '${{ inputs.init-antsibull-docs-version }}'
+          antsibull-docs-repository: '${{ inputs.init-antsibull-docs-repository }}'
           lenient: ${{ inputs.init-lenient }}
           fail-on-error: ${{ inputs.init-fail-on-error }}
           provide-link-targets: ${{ inputs.provide-link-targets }}
