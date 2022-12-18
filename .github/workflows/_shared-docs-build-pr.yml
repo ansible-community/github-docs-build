@@ -292,7 +292,7 @@ jobs:
 
       - name: Initialize the build environment (BASE)
         id: init-base
-        uses: ansible-community/github-docs-build/actions/ansible-docs-build-init@main
+        uses: felixfontein/github-docs-build/actions/ansible-docs-build-init@new-options
         with:
           collections: ${{ inputs.collection-name }}
           dest-dir: ${{ steps.vars.outputs.init-dir-base }}
@@ -336,7 +336,7 @@ jobs:
 
       - name: Initialize the build environment (HEAD)
         id: init-head
-        uses: ansible-community/github-docs-build/actions/ansible-docs-build-init@main
+        uses: felixfontein/github-docs-build/actions/ansible-docs-build-init@new-options
         with:
           collections: ${{ inputs.collection-name }}
           dest-dir: ${{ steps.vars.outputs.init-dir-head }}
