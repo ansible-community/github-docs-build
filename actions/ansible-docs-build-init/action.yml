@@ -59,6 +59,44 @@ inputs:
       This is only possible if 'collections' contains exactly one collection.
     required: false
     default: 'false'
+  index-rst-source:
+    description: |
+      Copy the provided file to `rst/index.rst` intead of templating a default one.
+    required: false
+  project:
+    description: |
+      Sets the `project` value in the Sphinx configuration.
+    required: false
+  copyright:
+    description: |
+      Sets the `copyright` value in the Sphinx configuration.
+    required: false
+  title:
+    description: |
+      Sets the `title` and `html_short_title` values in the Sphinx configuration.
+      If `html-short-title` is also specified, only `title` will be set to the value
+      specified here.
+    required: false
+  html-short-title:
+    description: |
+      Sets the `html_short_title` value in the Sphinx configuration. If not specified,
+      the value of `title` will be used.
+    required: false
+  extra-conf:
+    description: |
+      A newline separated list of `key=value` entries that will be added to the generated
+      `conf.py`.
+    required: false
+  extra-html-context:
+    description: |
+      A newline separated list of `key=value` entries that will be added to the generated
+      `conf.py` in `html_context`
+    required: false
+  extra-html-theme-options:
+    description: |
+      A newline separated list of `key=value` entries that will be added to the generated
+      `conf.py` in `html_theme_options`
+    required: false
 outputs:
   build-script:
     description: The path of the build script to execute.
@@ -76,6 +114,13 @@ runs:
         PIP_DISABLE_PIP_VERSION_CHECK: '1'
         _INPUT_PROVIDE_LINK_TARGETS: ${{ inputs.provide-link-targets }}
         _INPUT_INTERSPHINX_LINKS: ${{ inputs.intersphinx-links }}
+        _INPUT_PROJECT: ${{ inputs.project }}
+        _INPUT_COPYRIGHT: ${{ inputs.copyright }}
+        _INPUT_TITLE: ${{ inputs.title }}
+        _INPUT_HTML_SHORT_TITLE: ${{ inputs.html-short-title }}
+        _INPUT_EXTRA_CONF: ${{ inputs.extra-conf }}
+        _INPUT_EXTRA_HTML_CONTEXT: ${{ inputs.extra-html-context }}
+        _INPUT_EXTRA_HTML_THEME_OPTIONS: ${{ inputs.extra-html-theme-options }}
       shell: bash
       run: |
         echo "::group::Installing antsibull-docs"
@@ -92,21 +137,74 @@ runs:
             mkdir -p "${{ inputs.dest-dir }}"
             echo "::endgroup::"
 
-            INTERSPHINX_ARGS=()
+            INIT_ARGS=()
 
             if [[ "${_INPUT_INTERSPHINX_LINKS}" != "" ]]; then
                 echo "::group::Building list of intersphinx links"
+                _INTERSPHINX_ARGS=()
                 while read -r line; do
                     if [ "${line}" != "" ]; then
-                        INTERSPHINX_ARGS+=("--intersphinx" "${line}")
+                        _INTERSPHINX_ARGS+=("--intersphinx" "${line}")
                     fi
                 done <<< "${_INPUT_INTERSPHINX_LINKS}"
-                echo "Intersphinx args: ${INTERSPHINX_ARGS[@]}"
+                echo "Intersphinx args: ${_INTERSPHINX_ARGS[@]@Q}"
                 echo "::endgroup::"
+                INIT_ARGS+=("${_INTERSPHINX_ARGS[@]}")
             fi
 
+            if [[ "${_INPUT_EXTRA_CONF}" != "" ]]; then
+                echo "::group::Building list of extra configuration entries"
+                _EXTRA_CONF=()
+                while read -r line; do
+                    if [ "${line}" != "" ]; then
+                        _EXTRA_CONF+=("--extra-conf" "${line}")
+                    fi
+                done <<< "${_INPUT_EXTRA_CONF}"
+                echo "Extra configuration entries: ${_EXTRA_CONF[@]@Q}"
+                echo "::endgroup::"
+                INIT_ARGS+=("${_EXTRA_CONF[@]}")
+            fi
+
+            if [[ "${_INPUT_EXTRA_HTML_CONTEXT}" != "" ]]; then
+                echo "::group::Building list of extra HTML configuration entries"
+                _EXTRA_HTML_CONTEXT=()
+                while read -r line; do
+                    if [ "${line}" != "" ]; then
+                        _EXTRA_HTML_CONTEXT+=("--extra-html-context" "${line}")
+                    fi
+                done <<< "${_INPUT_EXTRA_HTML_CONTEXT}"
+                echo "Extra HTML context entries: ${_EXTRA_HTML_CONTEXT[@]@Q}"
+                echo "::endgroup::"
+                INIT_ARGS+=("${_EXTRA_HTML_CONTEXT[@]}")
+            fi
+
+            if [[ "${_INPUT_EXTRA_HTML_THEME_OPTIONS}" != "" ]]; then
+                echo "::group::Building list of extra HTML theme options"
+                _EXTRA_HTML_THEME_OPTIONS=()
+                while read -r line; do
+                    if [ "${line}" != "" ]; then
+                        _EXTRA_HTML_THEME_OPTIONS+=("--extra-html-theme-options" "${line}")
+                    fi
+                done <<< "${_INPUT_EXTRA_HTML_THEME_OPTIONS}"
+                echo "Extra HTML theme option entries: ${_EXTRA_HTML_THEME_OPTIONS[@]@Q}"
+                echo "::endgroup::"
+                INIT_ARGS+=("${_EXTRA_HTML_THEME_OPTIONS[@]}")
+            fi
+
+            INIT_ARGS+=("--use-current")
+            ${{ fromJSON(inputs.fail-on-error) && 'INIT_ARGS+=("--fail-on-error")' || '' }}
+            ${{ fromJSON(inputs.lenient) && 'INIT_ARGS+=("--lenient")' || '' }}
+            ${{ fromJSON(inputs.squash-hierarchy) && 'INIT_ARGS+=("--squash-hierarchy")' || '' }}
+            INIT_ARGS+=("--dest-dir" "${{ inputs.dest-dir }}")
+            ${{ inputs.index-rst-source && format('INIT_ARGS+=("--index-rst-source" "{0}")', inputs.index-rst-source) || '' }}
+            ${{ inputs.project && 'INIT_ARGS+=("--project" "${_INPUT_PROJECT}")' || '' }}
+            ${{ inputs.copyright && 'INIT_ARGS+=("--copyright" "${_INPUT_COPYRIGHT}")' || '' }}
+            ${{ inputs.title && 'INIT_ARGS+=("--title" "${_INPUT_TITLE}")' || '' }}
+            ${{ inputs.html-short-title && 'INIT_ARGS+=("--html-short-title" "${_INPUT_HTML_SHORT_TITLE}")' || '' }}
+
             echo "::group::Initialize Sphinx"
-            antsibull-docs sphinx-init --use-current ${{ fromJSON(inputs.fail-on-error) && '--fail-on-error' || '' }} ${{ fromJSON(inputs.lenient) && '--lenient' || '' }} ${{ fromJSON(inputs.squash-hierarchy) && '--squash-hierarchy' || '' }} --dest-dir "${{ inputs.dest-dir }}" ${{ inputs.collections }} ${INTERSPHINX_ARGS[@]}
+            echo "Run antsibull-docs sphinx-init ${INIT_ARGS[@]@Q} ${{ inputs.collections }}"
+            antsibull-docs sphinx-init "${INIT_ARGS[@]}" ${{ inputs.collections }}
             echo "::endgroup::"
         fi
 

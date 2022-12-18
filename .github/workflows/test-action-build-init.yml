@@ -43,6 +43,22 @@ jobs:
           - |
             outside_reference_1
             outside_reference_2
+        index-rst-source:
+          - ''
+        project:
+          - ''
+        copyright:
+          - ''
+        title:
+          - ''
+        html-short-title:
+          - ''
+        extra-conf:
+          - ''
+        extra-html-context:
+          - ''
+        extra-html-theme-options:
+          - ''
         intersphinx-links: ['']
         squash-hierarchy:
           - false
@@ -61,12 +77,29 @@ jobs:
               amazon_aws:https://ansible-collections.github.io/amazon.aws/branch/main/
               ansible_devel:https://docs.ansible.com/ansible-core/devel/
             squash-hierarchy: false
+            index-rst-source: README.md
+            title: Some long title
           - skip-init: false
             collections: foo.bar
             dest: ''
             lenient: false
             fail-on-error: true
             squash-hierarchy: true
+            project: Foo
+            copyright: Bar
+            title: Long title
+            html-short-title: Short title
+            extra-conf: |
+              foo=bar
+              baz=bam
+              long=This is "something long" 'with different quotes'
+            extra-html-context: |
+              foo=bam
+              baz=bar
+              long=Another "long" 'quotes' sentence
+            extra-html-theme-options: |
+              foo=baz
+              long=Yet "another" long 'quotes' text
 
     steps:
       - name: Checkout
@@ -96,6 +129,14 @@ jobs:
           provide-link-targets: ${{ matrix.provide-link-targets }}
           intersphinx-links: ${{ matrix.intersphinx-links }}
           squash-hierarchy: ${{ matrix.squash-hierarchy }}
+          index-rst-source: ${{ matrix.index-rst-source }}
+          project: ${{ matrix.project }}
+          copyright: ${{ matrix.copyright }}
+          title: ${{ matrix.title }}
+          html-short-title: ${{ matrix.html-short-title }}
+          extra-conf: ${{ matrix.extra-conf }}
+          extra-html-context: ${{ matrix.extra-html-context }}
+          extra-html-theme-options: ${{ matrix.extra-html-theme-options }}
 
       - name: assert
         env:
@@ -103,6 +144,8 @@ jobs:
           output_build_html: ${{ steps.init.outputs.build-html }}
         run: |
           set -x
+
+          ORIGINAL_DIR=$(pwd)
 
           # check that the build script exists
           [ -f "$output_build_script" ] || exit 1
@@ -112,11 +155,30 @@ jobs:
           mkdir -p "$output_build_html"
           cd "$output_build_html/../.."
 
+          ${{ matrix.skip-init }} || (
+            echo "::group::Show requirements.txt contents"
+            cat requirements.txt
+            echo
+            echo "::endgroup::"
+
+            echo "::group::Show build.sh contents"
+            cat build.sh
+            echo
+            echo "::endgroup::"
+
+            echo "::group::Show conf.py contents"
+            cat conf.py
+            echo
+            echo "::endgroup::"
+          )
+
           # by now, all requirements should have been installed, let's pip freeze
           pip freeze > "${{ runner.temp }}/pre-freeze.txt"
 
           # now we'll try to do a pip install again with the requirements file
+          echo "::group::Install requirements again"
           pip install -r "requirements.txt" --disable-pip-version-check
+          echo "::endgroup::"
 
           # and pip freeze again to compare
           pip freeze > "${{ runner.temp }}/post-freeze.txt"
@@ -153,6 +215,23 @@ jobs:
           # Check that the squash hierarchy flag was added
           ${{ matrix.squash-hierarchy }} && (grep -q -- ' --squash-hierarchy ' build.sh || exit 1)
 
-          # check if provide-link-targets was not used when being empty
+          # Check if provide-link-targets was not used when being empty
           # short circuit if skip-init is 'true' or matrix.provide-link-targets is not empty
           ${{ matrix.skip-init }} || ${{ matrix.provide-link-targets != '' }} || ! test -e rst/_targets.rst || exit 1
+
+          # Check whether index-rst-source worked
+          ${{ matrix.index-rst-source && 'true' || 'false' }} && (diff "${ORIGINAL_DIR}/${{ matrix.index-rst-source }}" rst/index.rst || exit 1)
+
+          # Check whether config options worked
+          ${{ matrix.project && 'true' || 'false' }} && (grep "project = '${{ matrix.project }}'" conf.py || exit 1)
+          ${{ matrix.copyright && 'true' || 'false' }} && (grep "copyright = '${{ matrix.copyright }}'" conf.py || exit 1)
+          ${{ matrix.title && 'true' || 'false' }} && (grep "title = '${{ matrix.title }}'" conf.py || exit 1)
+          ${{ matrix.title && !matrix.html-short-title && 'true' || 'false' }} && (grep "html_short_title = '${{ matrix.title }}'" conf.py || exit 1)
+          ${{ matrix.html-short-title && 'true' || 'false' }} && (grep "html_short_title = '${{ matrix.html-short-title }}'" conf.py || exit 1)
+
+          # TODO Check extra-conf
+          # TODO Check extra-html-context
+          # TODO Check extra-html-theme-options
+
+          # This must be the last line
+          exit 0

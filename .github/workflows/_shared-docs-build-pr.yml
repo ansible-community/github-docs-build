@@ -53,6 +53,52 @@ on:
         required: false
         type: string
         default: ansible-community/antsibull-docs
+      init-index-rst-source:
+        description: |
+          Copy the provided file to `rst/index.rst` intead of templating a default one.
+        required: false
+        type: string
+      init-project:
+        description: |
+          Sets the `project` value in the Sphinx configuration.
+        required: false
+        type: string
+      init-copyright:
+        description: |
+          Sets the `copyright` value in the Sphinx configuration.
+        required: false
+        type: string
+      init-title:
+        description: |
+          Sets the `title` and `html_short_title` values in the Sphinx configuration.
+          If `init-html-short-title` is also specified, only `title` will be set to the value
+          specified here.
+        required: false
+        type: string
+      init-html-short-title:
+        description: |
+          Sets the `html_short_title` value in the Sphinx configuration. If not specified,
+          the value of `init-title` will be used.
+        required: false
+        type: string
+      init-extra-conf:
+        description: |
+          A newline separated list of `key=value` entries that will be added to the generated
+          `conf.py`.
+        required: false
+        type: string
+      init-extra-html-context:
+        description: |
+          A newline separated list of `key=value` entries that will be added to the generated
+          `conf.py` in `html_context`
+        required: false
+        type: string
+      init-extra-html-theme-options:
+        description: |
+          A newline separated list of `key=value` entries that will be added to the generated
+          `conf.py` in `html_theme_options`
+        required: false
+        type: string
       artifact-name:
         description: The name of the artifact to upload.
         required: false
@@ -258,6 +304,14 @@ jobs:
           provide-link-targets: ${{ inputs.provide-link-targets }}
           intersphinx-links: ${{ inputs.intersphinx-links }}
           squash-hierarchy: ${{ inputs.squash-hierarchy }}
+          index-rst-source: ${{ inputs.init-index-rst-source }}
+          project: ${{ inputs.init-project }}
+          copyright: ${{ inputs.init-copyright }}
+          title: ${{ inputs.init-title }}
+          html-short-title: ${{ inputs.init-html-short-title }}
+          extra-conf: ${{ inputs.init-extra-conf }}
+          extra-html-context: ${{ inputs.init-extra-html-context }}
+          extra-html-theme-options: ${{ inputs.init-extra-html-theme-options }}
 
       - name: Build BASE
         id: build-base
@@ -294,6 +348,14 @@ jobs:
           provide-link-targets: ${{ inputs.provide-link-targets }}
           intersphinx-links: ${{ inputs.intersphinx-links }}
           squash-hierarchy: ${{ inputs.squash-hierarchy }}
+          index-rst-source: ${{ inputs.init-index-rst-source }}
+          project: ${{ inputs.init-project }}
+          copyright: ${{ inputs.init-copyright }}
+          title: ${{ inputs.init-title }}
+          html-short-title: ${{ inputs.init-html-short-title }}
+          extra-conf: ${{ inputs.init-extra-conf }}
+          extra-html-context: ${{ inputs.init-extra-html-context }}
+          extra-html-theme-options: ${{ inputs.init-extra-html-theme-options }}
 
       - name: Build HEAD
         id: build-head
