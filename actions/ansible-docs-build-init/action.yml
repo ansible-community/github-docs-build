@@ -125,9 +125,9 @@ runs:
       run: |
         echo "::group::Installing antsibull-docs"
         if [[ "${{ inputs.antsibull-docs-version }}" != "" ]] ; then
-            pip install https://github.com/${{ inputs.antsibull-docs-repository }}/archive/${{ inputs.antsibull-docs-version }}.tar.gz
+            pip install https://github.com/${{ inputs.antsibull-docs-repository }}/archive/${{ inputs.antsibull-docs-version }}.tar.gz sphinx_ansible_theme
         else
-            pip install antsibull-docs
+            pip install antsibull-docs sphinx_ansible_theme
         fi
         antsibull-docs --version
         echo "::endgroup::"
