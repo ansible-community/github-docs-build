@@ -108,7 +108,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.11
 
       # if we pass an empty string to dest-dir, it will override the default.
       # we can't copy the default into the matrix because it uses a templating

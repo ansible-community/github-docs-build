@@ -35,11 +35,11 @@ jobs:
       - uses: actions/setup-python@v4
         if: fromJSON(env.SHOULD_RUN)
         with:
-          python-version: '3.9'
+          python-version: '3.11'
 
       - name: Install Ansible
         if: fromJSON(env.SHOULD_RUN)
-        run: pip install 'ansible-core>=2.12,<2.13' --disable-pip-version-check
+        run: pip install 'ansible-core>=2.15,<2.16' --disable-pip-version-check
 
       - name: Generate new docs
         if: fromJSON(env.SHOULD_RUN)
