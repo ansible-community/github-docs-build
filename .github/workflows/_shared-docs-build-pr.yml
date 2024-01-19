@@ -99,6 +99,11 @@ on:
           `conf.py` in `html_theme_options`
         required: false
         type: string
+      init-append-conf-py:
+        description: |
+          If provided, this text will be appended to the generated `conf.py` as-is.
+        required: false
+        type: string
       artifact-name:
         description: The name of the artifact to upload.
         required: false
@@ -312,6 +317,7 @@ jobs:
           extra-conf: ${{ inputs.init-extra-conf }}
           extra-html-context: ${{ inputs.init-extra-html-context }}
           extra-html-theme-options: ${{ inputs.init-extra-html-theme-options }}
+          append-conf-py: ${{ inputs.init-append-conf-py }}
 
       - name: Build BASE
         id: build-base
@@ -356,6 +362,7 @@ jobs:
           extra-conf: ${{ inputs.init-extra-conf }}
           extra-html-context: ${{ inputs.init-extra-html-context }}
           extra-html-theme-options: ${{ inputs.init-extra-html-theme-options }}
+          append-conf-py: ${{ inputs.init-append-conf-py }}
 
       - name: Build HEAD
         id: build-head

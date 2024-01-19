@@ -97,6 +97,10 @@ inputs:
       A newline separated list of `key=value` entries that will be added to the generated
       `conf.py` in `html_theme_options`
     required: false
+  append-conf-py:
+    description: |
+      If provided, this text will be appended to the generated `conf.py` as-is.
+    required: false
 outputs:
   build-script:
     description: The path of the build script to execute.
@@ -121,6 +125,7 @@ runs:
         _INPUT_EXTRA_CONF: ${{ inputs.extra-conf }}
         _INPUT_EXTRA_HTML_CONTEXT: ${{ inputs.extra-html-context }}
         _INPUT_EXTRA_HTML_THEME_OPTIONS: ${{ inputs.extra-html-theme-options }}
+        _INPUT_APPEND_CONF_PY: ${{ inputs.append-conf-py }}
       shell: bash
       run: |
         echo "::group::Installing antsibull-docs"
@@ -226,6 +231,15 @@ runs:
             echo "Content of ${{ inputs.dest-dir }}/rst/_targets.rst:"
             echo ""
             cat "${{ inputs.dest-dir }}/rst/_targets.rst"
+            echo "::endgroup::"
+        fi
+
+        if [[ "${_INPUT_APPEND_CONF_PY}" != "" ]]; then
+            echo "::group::Appending to conf.py"
+            echo "${_INPUT_APPEND_CONF_PY}" >> "${{ inputs.dest-dir }}/conf.py"
+            echo "Content of ${{ inputs.dest-dir }}/conf.py:"
+            echo ""
+            cat "${{ inputs.dest-dir }}/conf.py"
             echo "::endgroup::"
         fi
 

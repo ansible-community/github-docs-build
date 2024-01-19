@@ -59,6 +59,8 @@ jobs:
           - ''
         extra-html-theme-options:
           - ''
+        append-conf-py:
+          - ''
         intersphinx-links: ['']
         squash-hierarchy:
           - false
@@ -100,6 +102,9 @@ jobs:
             extra-html-theme-options: |
               foo=baz
               long=Yet "another" long 'quotes' text
+            append-conf-py: |
+              # This is a special comment.
+              # FOO BAR 1234
 
     steps:
       - name: Checkout
@@ -137,6 +142,7 @@ jobs:
           extra-conf: ${{ matrix.extra-conf }}
           extra-html-context: ${{ matrix.extra-html-context }}
           extra-html-theme-options: ${{ matrix.extra-html-theme-options }}
+          append-conf-py: ${{ matrix.append-conf-py }}
 
       - name: assert
         env:
@@ -232,6 +238,9 @@ jobs:
           # TODO Check extra-conf
           # TODO Check extra-html-context
           # TODO Check extra-html-theme-options
+
+          ${{ matrix.append-conf-py && 'true' || 'false' }} && (grep -E '^# This is a special comment\.$' conf.py || exit 1)
+          ${{ matrix.append-conf-py && 'true' || 'false' }} && (grep -E '^# FOO BAR 1234$' conf.py || exit 1)
 
           # This must be the last line
           exit 0
