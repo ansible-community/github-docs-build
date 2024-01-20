@@ -101,6 +101,11 @@ on:
           `conf.py` in `html_theme_options`
         required: false
         type: string
+      init-append-conf-py:
+        description: |
+          If provided, this text will be appended to the generated `conf.py` as-is.
+        required: false
+        type: string
       artifact-upload:
         description: Whether or not to upload the build as an artifact.
         type: boolean
@@ -230,6 +235,7 @@ jobs:
           extra-conf: ${{ inputs.init-extra-conf }}
           extra-html-context: ${{ inputs.init-extra-html-context }}
           extra-html-theme-options: ${{ inputs.init-extra-html-theme-options }}
+          append-conf-py: ${{ inputs.init-append-conf-py }}
 
       - name: Build
         id: build
