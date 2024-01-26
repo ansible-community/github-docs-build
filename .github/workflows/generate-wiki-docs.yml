@@ -32,7 +32,7 @@ jobs:
           repository: ${{ github.repository }}.wiki
           path: ${{ env.WIKI }}
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         if: fromJSON(env.SHOULD_RUN)
         with:
           python-version: '3.11'
