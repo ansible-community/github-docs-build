@@ -9,3 +9,19 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "github-actions"
+    directory: "/actions/ansible-docs-build-comment"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "github-actions"
+    directory: "/actions/ansible-docs-build-diff"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "github-actions"
+    directory: "/actions/ansible-docs-build-html"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "github-actions"
+    directory: "/actions/ansible-docs-build-init"
+    schedule:
+      interval: "daily"
