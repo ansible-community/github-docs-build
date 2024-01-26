@@ -33,7 +33,7 @@ jobs:
           artifact-upload: false
 
       - name: Simple 1 - Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         id: simple1-artifact
         with:
           path: .artifacts/simple1
@@ -60,7 +60,7 @@ jobs:
           artifact-upload: false
 
       - name: Simple 2 - Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         id: simple2-artifact
         with:
           path: .artifacts/simple2
@@ -89,7 +89,7 @@ jobs:
           artifact-name: tests-simple3
 
       - name: Simple 3 - Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         id: simple3-artifact
         with:
           name: ${{ steps.simple3.outputs.artifact-name }}
@@ -129,7 +129,7 @@ jobs:
           artifact-name: tests-simple4
 
       - name: Simple 4 - Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         id: simple4-artifact
         with:
           name: ${{ steps.simple4.outputs.artifact-name }}
@@ -171,7 +171,7 @@ jobs:
           artifact-name: tests-simple5
 
       - name: Simple 5 - Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         id: simple5-artifact
         with:
           name: ${{ steps.simple5.outputs.artifact-name }}
