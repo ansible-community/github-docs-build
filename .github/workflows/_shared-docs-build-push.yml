@@ -158,7 +158,7 @@ jobs:
     steps:
       - name: Variable setup
         id: vars
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const inputs = ${{ toJSON(inputs) }}
