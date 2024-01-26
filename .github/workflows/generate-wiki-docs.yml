@@ -23,11 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - if: fromJSON(env.SHOULD_RUN)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Checkout wiki
         if: fromJSON(env.SHOULD_RUN)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}.wiki
           path: ${{ env.WIKI }}
