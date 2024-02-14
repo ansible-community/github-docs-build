@@ -91,9 +91,7 @@ jobs:
 
       - name: Publish
         # this action uses a token with contents:write, pinning to commit
-        # de7ea6f8efb354206b205ef54722213d99067935 == v3.9.0
-        # https://github.com/peaceiris/actions-gh-pages/releases/tag/v3.9.0
-        uses: peaceiris/actions-gh-pages@de7ea6f8efb354206b205ef54722213d99067935
+        uses: peaceiris/actions-gh-pages@373f7f263a76c20808c831209c920827a82a2847 # v3.9.3
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           publish_dir: html
