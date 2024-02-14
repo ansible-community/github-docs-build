@@ -91,7 +91,7 @@ runs:
 
     - name: Create diff
       id: diff
-      uses: actions/github-script@v6
+      uses: actions/github-script@v7
       with:
         script: |
           // attribution: https://stackoverflow.com/a/3561711/3905079
