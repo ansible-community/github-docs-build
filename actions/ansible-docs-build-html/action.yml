@@ -67,7 +67,7 @@ runs:
 
     - name: Upload artifact
       if: fromJSON(inputs.artifact-upload)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: ${{ steps.build.outputs.build-html }}
         name: ${{ inputs.artifact-name }}
