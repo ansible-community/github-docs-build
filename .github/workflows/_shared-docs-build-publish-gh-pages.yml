@@ -29,6 +29,12 @@ on:
         required: false
         type: string
         default: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+      publish-gh-pages-branch:
+        description: |
+          Whether to publish the `gh-pages` branch to GitHub Pages.
+        required: false
+        type: boolean
+        default: false
     outputs:
       url:
         description: The destination path pre-pended with the base-url.
@@ -39,12 +45,17 @@ on:
           The token used for publishing to GitHub Pages.
           Even when using the workflow token (secrets.GITHUB_TOKEN), it must be passed explicitly.
         required: true
+concurrency:  # Do not run workflow in parallel!
+  cancel-in-progress: false
+  group: pages
 jobs:
   publish-gh-pages:
     name: Publish to GitHub Pages
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+      id-token: write
     outputs:
       url: ${{ steps.vars.outputs.url }}
     steps:
@@ -100,3 +111,30 @@ jobs:
           # NOTE: do not use the force_orphan (keep_history) option.
           # It does not yet work correctly with keep_files and destination_dir:
           # - https://github.com/peaceiris/actions-gh-pages/issues/455
+
+      - name: Checkout repository
+        if: inputs.publish-gh-pages-branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages-checkout
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Setup GitHub Pages
+        if: inputs.publish-gh-pages-branch
+        uses: actions/configure-pages@v5
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Upload gh-pages branch as artifact
+        if: inputs.publish-gh-pages-branch
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: gh-pages-checkout
+
+      - name: Deploy gh-pages branch to GitHub Pages
+        if: inputs.publish-gh-pages-branch
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
