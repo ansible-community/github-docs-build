@@ -16,12 +16,12 @@ on:
         description: The version of Python to install.
         required: false
         type: string
-        default: '3.10'
+        default: '3.11'
       ansible-ref:
         description: The ref from which to install ansible, for example "stable-2.14" or "milestone".
         required: false
         type: string
-        default: stable-2.15
+        default: stable-2.17
       build-ref:
         description: |
           The ref from this repository to check out and build.
