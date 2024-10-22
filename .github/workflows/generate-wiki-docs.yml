@@ -35,7 +35,7 @@ jobs:
       - uses: actions/setup-python@v5
         if: fromJSON(env.SHOULD_RUN)
         with:
-          python-version: '3.11'
+          python-version: '3.13'
 
       - name: Install Ansible
         if: fromJSON(env.SHOULD_RUN)
