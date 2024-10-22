@@ -16,12 +16,12 @@ on:
         description: The version of Python to install.
         required: false
         type: string
-        default: '3.11'
+        default: '3.13'
       ansible-ref:
         description: The ref from which to install ansible, for example "stable-2.14" or "milestone".
         required: false
         type: string
-        default: stable-2.17
+        default: stable-2.18
       init-dest-dir:
         description: A directory relative to the checkout where the init process has already been run.
         required: false
