@@ -50,7 +50,7 @@ jobs:
         run: |
           import os
 
-          expected_hash = os.environ['ARTIFACT_HASH']
+          expected_hash = os.environ['EXPECTED_HASH']
           output_hash = os.environ['OUTPUT_HASH']
           output_build_html = os.environ['OUTPUT_BUILD_HTML']
           artifact_hash = os.environ['ARTIFACT_HASH']
