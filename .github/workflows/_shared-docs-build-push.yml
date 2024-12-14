@@ -183,6 +183,8 @@ jobs:
             core.setOutput('col-path', colpath)
             core.setOutput('checkout-path', checkoutPath)
 
+            const { RUNNER_TEMP } = process.env
+
             var initPath = `${RUNNER_TEMP}/docsbuild`
             var skipInit = false
 
