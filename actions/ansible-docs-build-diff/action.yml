@@ -81,12 +81,15 @@ runs:
     - name: Delete files that should not be included in the diff
       id: delete
       shell: bash
+      env:
+        BUILD_HTML_A: ${{ inputs.build-html-a }}
+        BUILD_HTML_B: ${{ inputs.build-html-b }}
       run: |
-        echo "::group::Deleting files from ${{ inputs.build-html-a }}"
-        find "${{ inputs.build-html-a }}" \( -name '*.js' -or -name '*.inv' \) -delete -print
+        echo "::group::Deleting files from ${BUILD_HTML_A}"
+        find "${BUILD_HTML_A}" \( -name '*.js' -or -name '*.inv' \) -delete -print
         echo "::endgroup::"
-        echo "::group::Deleting files from ${{ inputs.build-html-b }}"
-        find "${{ inputs.build-html-b }}" \( -name '*.js' -or -name '*.inv' \) -delete -print
+        echo "::group::Deleting files from ${BUILD_HTML_B}"
+        find "${BUILD_HTML_B}" \( -name '*.js' -or -name '*.inv' \) -delete -print
         echo "::endgroup::"
 
     - name: Create diff
