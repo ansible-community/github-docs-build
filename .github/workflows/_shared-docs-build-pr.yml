@@ -249,6 +249,8 @@ jobs:
             core.setOutput('col-path', colpath)
             core.setOutput('checkout-path', checkoutPath)
 
+            const { RUNNER_TEMP, EVENT_ACTION, MERGE_COMMIT_SHA, GITHUB_EVENT_NUMBER } = process.env
+
             var initPath = `${RUNNER_TEMP}/docsbuild`
             var skipInit = false
 
