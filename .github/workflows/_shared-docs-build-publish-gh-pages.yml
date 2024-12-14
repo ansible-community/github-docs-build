@@ -119,6 +119,7 @@ jobs:
           ref: gh-pages
           path: gh-pages-checkout
           token: ${{ secrets.GH_TOKEN }}
+          persist-credentials: false
 
       - name: Setup GitHub Pages
         if: inputs.publish-gh-pages-branch

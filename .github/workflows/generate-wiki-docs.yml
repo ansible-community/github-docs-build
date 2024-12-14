@@ -24,6 +24,8 @@ jobs:
     steps:
       - if: fromJSON(env.SHOULD_RUN)
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Checkout wiki
         if: fromJSON(env.SHOULD_RUN)
@@ -31,6 +33,7 @@ jobs:
         with:
           repository: ${{ github.repository }}.wiki
           path: ${{ env.WIKI }}
+          persist-credentials: false
 
       - uses: actions/setup-python@v5
         if: fromJSON(env.SHOULD_RUN)

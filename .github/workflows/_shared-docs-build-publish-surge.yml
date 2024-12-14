@@ -52,9 +52,15 @@ jobs:
       - name: Publish site
         if: inputs.action == 'publish'
         working-directory: html
-        run: surge ./ "${{ inputs.surge-site-name }}" --token ${{ secrets.SURGE_TOKEN }}
+        env:
+          SURGE_SITE_NAME: ${{ inputs.surge-site-name }}
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+        run: surge ./ "${SURGE_SITE_NAME}" --token "${SURGE_TOKEN}"
 
       - name: Teardown site
         if: inputs.action == 'teardown'
-        run: surge teardown "${{ inputs.surge-site-name }}" --token ${{ secrets.SURGE_TOKEN }}
+        env:
+          SURGE_SITE_NAME: ${{ inputs.surge-site-name }}
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+        run: surge teardown "${SURGE_SITE_NAME}" --token "${SURGE_TOKEN}"
         continue-on-error: true

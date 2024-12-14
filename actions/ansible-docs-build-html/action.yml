@@ -47,22 +47,23 @@ runs:
     - name: Invoke build
       id: build
       shell: bash
+      env:
+        _INPUT_BUILD_SCRIPT: ${{ inputs.build-script }}
+        _INPUT_BUILD_HTML: ${{ inputs.build-html }}
+        _INPUT_COPY_BUILD: ${{ inputs.copy-build }}
       run: |
-        echo "::group::Invoke build script '${{ inputs.build-script }}'"
-        "${{ inputs.build-script }}"
+        echo "::group::Invoke build script '${_INPUT_BUILD_SCRIPT}'"
+        "${_INPUT_BUILD_SCRIPT}"
         echo "::endgroup::"
 
-        HTML="${{ inputs.build-html }}"
-        COPY_BUILD="${{ inputs.copy-build }}"
-
-        if [[ "$COPY_BUILD" != "" ]] ; then
+        if [[ "${_INPUT_COPY_BUILD}" != "" ]] ; then
             echo "::group::Copy the build files"
-            mkdir -p "$COPY_BUILD"
-            rsync -avc --delete-after "$HTML/" "$COPY_BUILD/"
-            echo "build-html=$COPY_BUILD" >> ${GITHUB_OUTPUT}
+            mkdir -p "${_INPUT_COPY_BUILD}"
+            rsync -avc --delete-after "${_INPUT_BUILD_HTML}/" "${_INPUT_COPY_BUILD}/"
+            echo "build-html=${_INPUT_COPY_BUILD}" >> ${GITHUB_OUTPUT}
             echo "::endgroup::"
         else
-            echo "build-html=$HTML" >> ${GITHUB_OUTPUT}
+            echo "build-html=${_INPUT_BUILD_HTML}" >> ${GITHUB_OUTPUT}
         fi
 
     - name: Upload artifact
@@ -76,8 +77,13 @@ runs:
     - name: Output step
       id: outs
       shell: bash
+      env:
+        _VALUE_HASH: ${{ hashFiles(steps.build.outputs.build-html) }}
+        _VALUE_RUN_ID: ${{ github.run_id }}
+        _VALUE_REPOSITORY: ${{ github.repository }}
+        _VALUE_ARTIFACT_UPLOAD: ${{ inputs.artifact-upload }}
       run: |
-        echo "hash=${{ hashFiles(steps.build.outputs.build-html) }}" >> ${GITHUB_OUTPUT}
-        if [[ "${{ inputs.artifact-upload }}" == "true" ]] ; then
-            echo "artifact-url=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> ${GITHUB_OUTPUT}
+        echo "hash=${_VALUE_HASH}" >> ${GITHUB_OUTPUT}
+        if [[ "${_VALUE_ARTIFACT_UPLOAD}" == "true" ]] ; then
+            echo "artifact-url=https://github.com/${_VALUE_REPOSITORY}/actions/runs/${_VALUE_RUN_ID}" >> ${GITHUB_OUTPUT}
         fi

@@ -116,6 +116,11 @@ runs:
       id: init
       env:
         PIP_DISABLE_PIP_VERSION_CHECK: '1'
+        _INPUT_ANTSIBULL_DOCS_VERSION: ${{ inputs.antsibull-docs-version }}
+        _INPUT_ANTSIBULL_DOCS_REPO: ${{ inputs.antsibull-docs-repository }}
+        _INPUT_COLLECTIONS: ${{ inputs.collections }}
+        _INPUT_DEST_DIR: ${{ inputs.dest-dir }}
+        _INPUT_SKIP_INIT: ${{ inputs.skip-init }}
         _INPUT_PROVIDE_LINK_TARGETS: ${{ inputs.provide-link-targets }}
         _INPUT_INTERSPHINX_LINKS: ${{ inputs.intersphinx-links }}
         _INPUT_PROJECT: ${{ inputs.project }}
@@ -129,17 +134,17 @@ runs:
       shell: bash
       run: |
         echo "::group::Installing antsibull-docs"
-        if [[ "${{ inputs.antsibull-docs-version }}" != "" ]] ; then
-            pip install https://github.com/${{ inputs.antsibull-docs-repository }}/archive/${{ inputs.antsibull-docs-version }}.tar.gz sphinx_ansible_theme
+        if [[ "${_INPUT_ANTSIBULL_DOCS_VERSION}" != "" ]] ; then
+            pip install "https://github.com/${_INPUT_ANTSIBULL_DOCS_REPO}/archive/${_INPUT_ANTSIBULL_DOCS_VERSION}.tar.gz" sphinx_ansible_theme
         else
             pip install antsibull-docs sphinx_ansible_theme
         fi
         antsibull-docs --version
         echo "::endgroup::"
 
-        if [[ "${{ inputs.skip-init }}" != "true" ]] ; then
+        if [[ "${_INPUT_SKIP_INIT}" != "true" ]] ; then
             echo "::group::Create destination directory"
-            mkdir -p "${{ inputs.dest-dir }}"
+            mkdir -p "${_INPUT_DEST_DIR}"
             echo "::endgroup::"
 
             INIT_ARGS=()
@@ -200,7 +205,7 @@ runs:
             ${{ fromJSON(inputs.fail-on-error) && 'INIT_ARGS+=("--fail-on-error")' || '' }}
             ${{ fromJSON(inputs.lenient) && 'INIT_ARGS+=("--lenient")' || '' }}
             ${{ fromJSON(inputs.squash-hierarchy) && 'INIT_ARGS+=("--squash-hierarchy")' || '' }}
-            INIT_ARGS+=("--dest-dir" "${{ inputs.dest-dir }}")
+            INIT_ARGS+=("--dest-dir" "${_INPUT_DEST_DIR}")
             ${{ inputs.index-rst-source && format('INIT_ARGS+=("--index-rst-source" "{0}")', inputs.index-rst-source) || '' }}
             ${{ inputs.project && 'INIT_ARGS+=("--project" "${_INPUT_PROJECT}")' || '' }}
             ${{ inputs.copyright && 'INIT_ARGS+=("--copyright" "${_INPUT_COPYRIGHT}")' || '' }}
@@ -208,44 +213,44 @@ runs:
             ${{ inputs.html-short-title && 'INIT_ARGS+=("--html-short-title" "${_INPUT_HTML_SHORT_TITLE}")' || '' }}
 
             echo "::group::Initialize Sphinx"
-            echo "Run antsibull-docs sphinx-init ${INIT_ARGS[@]@Q} ${{ inputs.collections }}"
-            antsibull-docs sphinx-init "${INIT_ARGS[@]}" ${{ inputs.collections }}
+            echo "Run antsibull-docs sphinx-init ${INIT_ARGS[@]@Q} ${_INPUT_COLLECTIONS}"
+            antsibull-docs sphinx-init "${INIT_ARGS[@]}" ${_INPUT_COLLECTIONS}
             echo "::endgroup::"
         fi
 
         if [[ "${_INPUT_PROVIDE_LINK_TARGETS}" != "" ]]; then
             echo "::group::Create small RST file for link"
-            mkdir -p "${{ inputs.dest-dir }}/rst"
-            echo ":orphan:" > "${{ inputs.dest-dir }}/rst/_targets.rst"
-            echo "" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
+            mkdir -p "${_INPUT_DEST_DIR}/rst"
+            echo ":orphan:" > "${_INPUT_DEST_DIR}/rst/_targets.rst"
+            echo "" >> "${_INPUT_DEST_DIR}/rst/_targets.rst"
             while read -r line; do
               if [ "${line}" != "" ]; then
-                echo ".. _${line}:" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
+                echo ".. _${line}:" >> "${_INPUT_DEST_DIR}/rst/_targets.rst"
               fi
             done <<< "${_INPUT_PROVIDE_LINK_TARGETS}"
-            echo "" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
-            echo "Replacement stub for existing reference" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
-            echo "=======================================" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
-            echo "" >> "${{ inputs.dest-dir }}/rst/_targets.rst"
-            echo "This file just exists to provide link targets. Please ignore it." >> "${{ inputs.dest-dir }}/rst/_targets.rst"
-            echo "Content of ${{ inputs.dest-dir }}/rst/_targets.rst:"
+            echo "" >> "${_INPUT_DEST_DIR}/rst/_targets.rst"
+            echo "Replacement stub for existing reference" >> "${_INPUT_DEST_DIR}/rst/_targets.rst"
+            echo "=======================================" >> "${_INPUT_DEST_DIR}/rst/_targets.rst"
+            echo "" >> "${_INPUT_DEST_DIR}/rst/_targets.rst"
+            echo "This file just exists to provide link targets. Please ignore it." >> "${_INPUT_DEST_DIR}/rst/_targets.rst"
+            echo "Content of ${_INPUT_DEST_DIR}/rst/_targets.rst:"
             echo ""
-            cat "${{ inputs.dest-dir }}/rst/_targets.rst"
+            cat "${_INPUT_DEST_DIR}/rst/_targets.rst"
             echo "::endgroup::"
         fi
 
         if [[ "${_INPUT_APPEND_CONF_PY}" != "" ]]; then
             echo "::group::Appending to conf.py"
-            echo "${_INPUT_APPEND_CONF_PY}" >> "${{ inputs.dest-dir }}/conf.py"
-            echo "Content of ${{ inputs.dest-dir }}/conf.py:"
+            echo "${_INPUT_APPEND_CONF_PY}" >> "${_INPUT_DEST_DIR}/conf.py"
+            echo "Content of ${_INPUT_DEST_DIR}/conf.py:"
             echo ""
-            cat "${{ inputs.dest-dir }}/conf.py"
+            cat "${_INPUT_DEST_DIR}/conf.py"
             echo "::endgroup::"
         fi
 
         echo "::group::Install additional requirements"
-        pip install -r "${{ inputs.dest-dir }}/requirements.txt"
+        pip install -r "${_INPUT_DEST_DIR}/requirements.txt"
         echo "::endgroup::"
 
-        echo "build-script=${{ inputs.dest-dir }}/build.sh" >> ${GITHUB_OUTPUT}
-        echo "build-html=${{ inputs.dest-dir }}/build/html" >> ${GITHUB_OUTPUT}
+        echo "build-script=${_INPUT_DEST_DIR}/build.sh" >> ${GITHUB_OUTPUT}
+        echo "build-html=${_INPUT_DEST_DIR}/build/html" >> ${GITHUB_OUTPUT}
