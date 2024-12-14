@@ -229,6 +229,11 @@ jobs:
       - name: Variable setup
         id: vars
         uses: actions/github-script@v7
+        env:
+          RUNNER_TEMP: ${{ runner.temp }}
+          EVENT_ACTION: ${{ github.event.action }}
+          MERGE_COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          GITHUB_EVENT_NUMBER: ${{ github.event.number }}
         with:
           script: |
             const inputs = ${{ toJSON(inputs) }}
@@ -244,7 +249,7 @@ jobs:
             core.setOutput('col-path', colpath)
             core.setOutput('checkout-path', checkoutPath)
 
-            var initPath = '${{ runner.temp }}/docsbuild'
+            var initPath = `${RUNNER_TEMP}/docsbuild`
             var skipInit = false
 
             if (inputs['init-dest-dir'] != '') {
@@ -268,10 +273,10 @@ jobs:
             // See also:
             // - https://github.com/ansible-community/github-docs-build/issues/36
 
-            if ('${{ github.event.action }}' == 'closed') {
-                core.setOutput('pr-checkout-ref', '${{ github.event.pull_request.merge_commit_sha }}')
+            if (`${EVENT_ACTION}` == 'closed') {
+                core.setOutput('pr-checkout-ref', `${MERGE_COMMIT_SHA}`)
             } else {
-                core.setOutput('pr-checkout-ref', 'refs/pull/${{ github.event.number }}/merge')
+                core.setOutput('pr-checkout-ref', `refs/pull/${GITHUB_EVENT_NUMBER}/merge`)
             }
 
       - name: Set up Python
@@ -280,13 +285,17 @@ jobs:
           python-version: ${{ inputs.python }}
 
       - name: Install Ansible
-        run: pip install https://github.com/ansible/ansible/archive/${{ inputs.ansible-ref }}.tar.gz --disable-pip-version-check
+        env: 
+          ANSIBLE_REF: ${{ inputs.ansible-ref }}
+        run: pip install "https://github.com/ansible/ansible/archive/${ANSIBLE_REF}.tar.gz" --disable-pip-version-check
 
       - name: Install extra collections
         shell: bash
+        env:
+          EXTRA_COLLECTIONS: ${{ inputs.extra-collections }}
         run: |
-          if [[ "${{ inputs.extra-collections }}" != "" ]] ; then
-            ansible-galaxy collection install ${{ inputs.extra-collections }}
+          if [[ "${EXTRA_COLLECTIONS}" != "" ]] ; then
+            ansible-galaxy collection install ${EXTRA_COLLECTIONS}
           fi
 
       - name: Checkout BASE
@@ -294,6 +303,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           path: ${{ steps.vars.outputs.checkout-path }}
+          persist-credentials: false
 
       - name: Initialize the build environment (BASE)
         id: init-base
@@ -339,6 +349,7 @@ jobs:
           # a PR, **but** then we get https://github.com/ansible-community/github-docs-build/issues/3 back...
           ref: ${{ steps.vars.outputs.pr-checkout-ref }}
           path: ${{ steps.vars.outputs.checkout-path }}
+          persist-credentials: false
 
       - name: Initialize the build environment (HEAD)
         id: init-head
