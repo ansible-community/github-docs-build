@@ -226,7 +226,7 @@ jobs:
         run: |
           import os
 
-          expected_hash = os.environ['expected_hash ']
+          expected_hash = os.environ['expected_hash']
           output_hash = os.environ['output_hash']
           output_build_html = os.environ['output_build_html']
           artifact_hash = os.environ['artifact_hash']
