@@ -242,7 +242,7 @@ jobs:
                 colpath = inputs['collection-name'].replace('.', '/')
             }
 
-            core.exportVariable('ANSIBLE_COLLECTIONS_PATHS', process.env.GITHUB_WORKSPACE)
+            core.exportVariable('ANSIBLE_COLLECTIONS_PATH', process.env.GITHUB_WORKSPACE)
 
             const checkoutPath = `ansible_collections/${colpath}`
 

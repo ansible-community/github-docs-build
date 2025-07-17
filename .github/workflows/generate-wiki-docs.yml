@@ -19,7 +19,7 @@ jobs:
   generate:
     env:
       WIKI: ${{ github.workspace }}/wiki
-      ANSIBLE_COLLECTIONS_PATHS: ${{ github.workspace }}/.internal/ansible
+      ANSIBLE_COLLECTIONS_PATH: ${{ github.workspace }}/.internal/ansible
     runs-on: ubuntu-latest
     steps:
       - if: fromJSON(env.SHOULD_RUN)
