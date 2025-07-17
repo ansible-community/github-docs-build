@@ -303,7 +303,12 @@ jobs:
       - name: Checkout BASE
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          # Use base.ref, not base.sha, to make sure we do not get a checkout of the base at an earlier time
+          # (when the PR's branch was branched off the PR's target branch), but right now. Without this there
+          # will be a potentially large list of changes since the merge commit we check out for HEAD is based
+          # on a far newer version. I'm not 100% sure whether this is also a good idea for the closed event
+          # though...
+          ref: ${{ github.event.pull_request.base.ref }}
           path: ${{ steps.vars.outputs.checkout-path }}
           persist-credentials: false
 
