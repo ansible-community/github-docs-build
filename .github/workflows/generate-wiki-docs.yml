@@ -23,19 +23,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - if: fromJSON(env.SHOULD_RUN)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
       - name: Checkout wiki
         if: fromJSON(env.SHOULD_RUN)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ github.repository }}.wiki
           path: ${{ env.WIKI }}
           persist-credentials: false
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         if: fromJSON(env.SHOULD_RUN)
         with:
           python-version: '3.13'
