@@ -36,15 +36,15 @@ jobs:
       - name: Retrieve rendered docs
         if: inputs.action == 'publish'
         id: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ inputs.artifact-name }}
           path: html
 
       - name: Install Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 14
+          node-version: 24
 
       - name: Install Surge
         run: npm install -g surge@0.23.1
