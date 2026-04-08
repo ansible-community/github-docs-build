@@ -123,7 +123,7 @@ jobs:
 
       - name: Setup GitHub Pages
         if: inputs.publish-gh-pages-branch
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
         with:
           token: ${{ secrets.GH_TOKEN }}
 
@@ -136,6 +136,6 @@ jobs:
       - name: Deploy gh-pages branch to GitHub Pages
         if: inputs.publish-gh-pages-branch
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         with:
           token: ${{ secrets.GH_TOKEN }}
