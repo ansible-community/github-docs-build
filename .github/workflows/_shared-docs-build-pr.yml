@@ -228,7 +228,7 @@ jobs:
     steps:
       - name: Variable setup
         id: vars
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           RUNNER_TEMP: ${{ runner.temp }}
           EVENT_ACTION: ${{ github.event.action }}
