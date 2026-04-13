@@ -129,7 +129,7 @@ jobs:
 
       - name: Upload gh-pages branch as artifact
         if: inputs.publish-gh-pages-branch
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: gh-pages-checkout
 
