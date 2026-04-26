@@ -88,30 +88,6 @@ jobs:
           echo "::error title=Missing artifact-name::action was 'publish' but artifact-name was not supplied."
           exit 1
 
-      - name: Retrieve rendered docs
-        if: inputs.action == 'publish'
-        id: download
-        uses: actions/download-artifact@v8
-        with:
-          name: ${{ inputs.artifact-name }}
-          path: html
-
-      - name: Teardown source
-        if: inputs.action == 'teardown'
-        run: mkdir -p html
-
-      - name: Publish
-        # this action uses a token with contents:write, pinning to commit
-        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
-        with:
-          github_token: ${{ secrets.GH_TOKEN }}
-          publish_dir: html
-          keep_files: false  # with destination_dir, this applies only to the chosen dir
-          destination_dir: ${{ steps.vars.outputs.dest }}
-          # NOTE: do not use the force_orphan (keep_history) option.
-          # It does not yet work correctly with keep_files and destination_dir:
-          # - https://github.com/peaceiris/actions-gh-pages/issues/455
-
       - name: Checkout repository
         if: inputs.publish-gh-pages-branch
         uses: actions/checkout@v6
@@ -119,7 +95,38 @@ jobs:
           ref: gh-pages
           path: gh-pages-checkout
           token: ${{ secrets.GH_TOKEN }}
-          persist-credentials: false
+          persist-credentials: true  # we plan to add a commit and push to the repo
+
+      - name: Remove target directory from checkout
+        working-directory: gh-pages-checkout
+        env:
+          DEST_DIR: ${{ steps.vars.outputs.dest }}
+        run: |
+          rm -rf "${DEST_DIR}"
+
+      - name: Retrieve rendered docs
+        if: inputs.action == 'publish'
+        id: download
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: gh-pages-checkout/${{ steps.vars.outputs.dest }}
+
+      - name: Add changes to git
+        working-directory: gh-pages-checkout
+        env:
+          DEST_DIR: ${{ steps.vars.outputs.dest }}
+          COMMIT_USERNAME: ${{ github.actor }}
+          COMMIT_EMAIL: |-
+            ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+          COMMIT_MSG: |-
+            deploy: ${{ github.sha }}
+        run: |
+          git add "${DEST_DIR}"
+          git config --global user.name "${COMMIT_USERNAME}"
+          git config --global user.email "${COMMIT_EMAIL}"
+          git commit -m "${COMMIT_MSG}" || true
+          git push
 
       - name: Setup GitHub Pages
         if: inputs.publish-gh-pages-branch
