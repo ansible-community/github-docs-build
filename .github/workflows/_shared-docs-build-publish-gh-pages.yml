@@ -121,7 +121,7 @@ jobs:
           COMMIT_MSG: |-
             deploy: ${{ github.sha }}
         run: |
-          git add "${DEST_DIR}"
+          git add "${DEST_DIR}" || true
           git config --global user.name "${COMMIT_USERNAME}"
           git config --global user.email "${COMMIT_EMAIL}"
           git commit -m "${COMMIT_MSG}" || true
