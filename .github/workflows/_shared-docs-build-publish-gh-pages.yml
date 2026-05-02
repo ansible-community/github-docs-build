@@ -89,7 +89,6 @@ jobs:
           exit 1
 
       - name: Checkout repository
-        if: inputs.publish-gh-pages-branch
         uses: actions/checkout@v6
         with:
           ref: gh-pages
