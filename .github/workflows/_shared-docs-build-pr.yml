@@ -301,7 +301,7 @@ jobs:
           fi
 
       - name: Checkout BASE
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           path: ${{ steps.vars.outputs.checkout-path }}
@@ -341,7 +341,7 @@ jobs:
           artifact-upload: 'false'
 
       - name: Checkout HEAD
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # It would be better to use
           #
