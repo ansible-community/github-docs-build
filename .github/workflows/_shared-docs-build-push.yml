@@ -217,7 +217,7 @@ jobs:
           fi
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: ${{ steps.vars.outputs.checkout-path }}
           ref: ${{ inputs.build-ref }}
