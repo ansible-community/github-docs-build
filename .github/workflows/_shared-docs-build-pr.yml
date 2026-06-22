@@ -352,6 +352,9 @@ jobs:
           ref: ${{ steps.vars.outputs.pr-checkout-ref }}
           path: ${{ steps.vars.outputs.checkout-path }}
           persist-credentials: false
+          # Since checkout v7, we have to explicitly allow unsafe use.
+          # We can remove this if we explicitly specify `ref` as above.
+          allow-unsafe-pr-checkout: true
 
       - name: Initialize the build environment (HEAD)
         id: init-head
