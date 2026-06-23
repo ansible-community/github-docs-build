@@ -222,6 +222,8 @@ jobs:
           path: ${{ steps.vars.outputs.checkout-path }}
           ref: ${{ inputs.build-ref }}
           persist-credentials: false
+          # Since checkout v7, we have to explicitly allow unsafe use.
+          allow-unsafe-pr-checkout: true
 
       - name: Initialize the build environment
         id: init
