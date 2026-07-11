@@ -222,7 +222,10 @@ jobs:
           path: ${{ steps.vars.outputs.checkout-path }}
           ref: ${{ inputs.build-ref }}
           persist-credentials: false
-
+          # Since checkout v7, we have to explicitly allow unsafe use.
+          # We can remove this if we explicitly specify `ref` as above.
+          allow-unsafe-pr-checkout: true
+          
       - name: Initialize the build environment
         id: init
         uses: ansible-community/github-docs-build/actions/ansible-docs-build-init@main
