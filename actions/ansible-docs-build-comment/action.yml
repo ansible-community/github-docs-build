@@ -45,7 +45,7 @@ runs:
   steps:
     - name: Look for an existing comment
       id: fc
-      uses: peter-evans/find-comment@v4
+      uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad  # v4.0.0
       with:
         issue-number: ${{ inputs.pr-number }}
         body-includes: ${{ inputs.body-includes }}
@@ -53,7 +53,7 @@ runs:
 
     - name: Determine actions
       id: vars
-      uses: actions/github-script@v9
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
       with:
         script: |
           const inputs = ${{ toJSON(inputs )}}
@@ -78,7 +78,7 @@ runs:
       if: >-
         steps.vars.outputs.action == 'remove'
         && steps.fc.outputs.comment-id
-      uses: actions/github-script@v9
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
       with:
         script: |
           github.rest.issues.deleteComment({
@@ -90,7 +90,7 @@ runs:
     - name: Post or update comment
       id: comment
       if: steps.vars.outputs.action == 'update'
-      uses: peter-evans/create-or-update-comment@v5
+      uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9  # v5.0.0
       with:
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ inputs.pr-number }}

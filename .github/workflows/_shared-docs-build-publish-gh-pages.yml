@@ -61,7 +61,7 @@ jobs:
     steps:
       - name: Process variables
         id: vars
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
         with:
           script: |
             const inputs = ${{ toJSON(inputs) }}
@@ -89,7 +89,7 @@ jobs:
           exit 1
 
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           ref: gh-pages
           path: gh-pages-checkout
@@ -106,7 +106,7 @@ jobs:
       - name: Retrieve rendered docs
         if: inputs.action == 'publish'
         id: download
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
         with:
           name: ${{ inputs.artifact-name }}
           path: gh-pages-checkout/${{ steps.vars.outputs.dest }}
@@ -129,19 +129,19 @@ jobs:
 
       - name: Setup GitHub Pages
         if: inputs.publish-gh-pages-branch
-        uses: actions/configure-pages@v6
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d  # v6.0.0
         with:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Upload gh-pages branch as artifact
         if: inputs.publish-gh-pages-branch
-        uses: actions/upload-pages-artifact@v5
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9  # v5.0.0
         with:
           path: gh-pages-checkout
 
       - name: Deploy gh-pages branch to GitHub Pages
         if: inputs.publish-gh-pages-branch
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128  # v5.0.0
         with:
           token: ${{ secrets.GH_TOKEN }}

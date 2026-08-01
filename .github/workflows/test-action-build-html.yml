@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
 
@@ -35,7 +35,7 @@ jobs:
           artifact-upload: false
 
       - name: Simple 1 - Download artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
         id: simple1-artifact
         with:
           path: .artifacts/simple1
@@ -69,7 +69,7 @@ jobs:
           artifact-upload: false
 
       - name: Simple 2 - Download artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
         id: simple2-artifact
         with:
           path: .artifacts/simple2
@@ -106,7 +106,7 @@ jobs:
           artifact-name: tests-simple3
 
       - name: Simple 3 - Download artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
         id: simple3-artifact
         with:
           name: ${{ steps.simple3.outputs.artifact-name }}
@@ -156,7 +156,7 @@ jobs:
           artifact-name: tests-simple4
 
       - name: Simple 4 - Download artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
         id: simple4-artifact
         with:
           name: ${{ steps.simple4.outputs.artifact-name }}
@@ -209,7 +209,7 @@ jobs:
           artifact-name: tests-simple5
 
       - name: Simple 5 - Download artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
         id: simple5-artifact
         with:
           name: ${{ steps.simple5.outputs.artifact-name }}
