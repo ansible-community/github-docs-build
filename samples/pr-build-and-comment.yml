@@ -13,7 +13,7 @@ jobs:
       contents: read
     name: Validate Ansible Docs
     if: github.event.action != 'closed'
-    uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-push.yml@main
+    uses: $/.github/workflows/_shared-docs-build-push.yml
     with:
       artifact-upload: false
       init-lenient: false
@@ -26,7 +26,7 @@ jobs:
     permissions:
       contents: read
     name: Build Ansible Docs
-    uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-pr.yml@main
+    uses: $/.github/workflows/_shared-docs-build-pr.yml
     with:
       init-lenient: true
       init-fail-on-error: false
@@ -40,7 +40,7 @@ jobs:
       id-token: write
     needs: [build-docs]
     name: Publish Ansible Docs
-    uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-publish-gh-pages.yml@main
+    uses: $/.github/workflows/_shared-docs-build-publish-gh-pages.yml
     with:
       artifact-name: ${{ needs.build-docs.outputs.artifact-name }}
       action: ${{ (github.event.action == 'closed' || needs.build-docs.outputs.changed != 'true') && 'teardown' || 'publish' }}
@@ -56,7 +56,7 @@ jobs:
     name: PR comments
     steps:
       - name: PR comment
-        uses: ansible-community/github-docs-build/actions/ansible-docs-build-comment@main
+        uses: $/actions/ansible-docs-build-comment
         with:
           body-includes: '## Docs Build'
           reactions: heart

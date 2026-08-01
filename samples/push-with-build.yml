@@ -20,7 +20,7 @@ jobs:
     permissions:
       contents: read
     name: Build Ansible Docs
-    uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-push.yml@main
+    uses: $/.github/workflows/_shared-docs-build-push.yml
     with:
       init-lenient: false
       init-fail-on-error: true

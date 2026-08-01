@@ -228,7 +228,7 @@ jobs:
           
       - name: Initialize the build environment
         id: init
-        uses: ansible-community/github-docs-build/actions/ansible-docs-build-init@main
+        uses: $/actions/ansible-docs-build-init
         with:
           collections: ${{ steps.vars.outputs.col-name }}
           dest-dir: ${{ steps.vars.outputs.init-dir }}
@@ -252,7 +252,7 @@ jobs:
 
       - name: Build
         id: build
-        uses: ansible-community/github-docs-build/actions/ansible-docs-build-html@main
+        uses: $/actions/ansible-docs-build-html
         with:
           build-script: ${{ steps.init.outputs.build-script }}
           build-html: ${{ steps.init.outputs.build-html }}

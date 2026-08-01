@@ -124,7 +124,7 @@ jobs:
       # the id (and we need it in later steps).
       - name: Init
         id: init
-        uses: ./actions/ansible-docs-build-init
+        uses: $/actions/ansible-docs-build-init
         with:
           collections: ${{ matrix.collections }}
           # combining runner.temp and /docsbuild copies the default from the action

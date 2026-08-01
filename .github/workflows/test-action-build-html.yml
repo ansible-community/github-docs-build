@@ -28,7 +28,7 @@ jobs:
 
       - name: Simple 1 invoke - no copy, no artifact
         id: simple1
-        uses: ./actions/ansible-docs-build-html
+        uses: $/actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
           build-html: .test/simple-build/build/html
@@ -61,7 +61,7 @@ jobs:
 
       - name: Simple 2 invoke - with copy, no artifact
         id: simple2
-        uses: ./actions/ansible-docs-build-html
+        uses: $/actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
           build-html: .test/simple-build/build/html
@@ -98,7 +98,7 @@ jobs:
 
       - name: Simple 3 invoke - no copy, with artifact
         id: simple3
-        uses: ./actions/ansible-docs-build-html
+        uses: $/actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
           build-html: .test/simple-build/build/html
@@ -147,7 +147,7 @@ jobs:
 
       - name: Simple 4 invoke - with copy, with artifact
         id: simple4
-        uses: ./actions/ansible-docs-build-html
+        uses: $/actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
           build-html: .test/simple-build/build/html
@@ -200,7 +200,7 @@ jobs:
 
       - name: Simple 5 invoke - with copy, with artifact, trailing slash in input
         id: simple5
-        uses: ./actions/ansible-docs-build-html
+        uses: $/actions/ansible-docs-build-html
         with:
           build-script: .test/simple-build/build.sh
           build-html: .test/simple-build/build/html/
