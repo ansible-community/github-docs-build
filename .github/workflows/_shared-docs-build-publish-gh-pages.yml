@@ -139,6 +139,11 @@ jobs:
         with:
           path: gh-pages-checkout
 
+      - name: Wait a bit
+        # Temporary workaround for https://github.com/actions/deploy-pages/issues/451
+        if: inputs.publish-gh-pages-branch
+        run: sleep 2
+
       - name: Deploy gh-pages branch to GitHub Pages
         if: inputs.publish-gh-pages-branch
         id: deployment
