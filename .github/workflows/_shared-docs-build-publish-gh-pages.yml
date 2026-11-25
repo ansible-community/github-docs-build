@@ -142,7 +142,7 @@ jobs:
       - name: Wait a bit
         # Temporary workaround for https://github.com/actions/deploy-pages/issues/451
         if: inputs.publish-gh-pages-branch
-        run: sleep 2
+        run: sleep 20
 
       - name: Deploy gh-pages branch to GitHub Pages
         if: inputs.publish-gh-pages-branch
